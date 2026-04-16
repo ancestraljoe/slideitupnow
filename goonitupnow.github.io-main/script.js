@@ -1,6 +1,7 @@
 import { initSettings, settings, setIsPaused } from './settings.js';
 import { showPicker, loadFiles, loadDroppedFiles, nextFileSlides, current, total, restartSlides, resetFiles } from './localFiles.js';
 import { initDragDrop } from './dragdrop.js';
+import { initFavorites, wrapSlide, startFavSlides, nextFavSlides, restartFavSlides } from './favorites.js';
 import { startReddit, nextRedditSlides, initReddit, resetReddit } from './reddit.js';
 
 const DEBOUNCE_MS = 100;
@@ -68,14 +69,17 @@ function jitter(num) {
 }
 
 function disposeResources(elem) {
-    if (elem.dataset.isObject) {
-        URL.revokeObjectURL(elem.src)
-    } else if (elem.dataset.hlsSrc) {
-        let hlsObj = hlsSources[elem.dataset.hlsSrc];
+    // Handle wrapped slides
+    const media = elem.classList?.contains('slide-wrapper') ? elem.querySelector('video, img') : elem
+    if (!media) return
+    if (media.dataset?.isObject) {
+        URL.revokeObjectURL(media.src)
+    } else if (media.dataset?.hlsSrc) {
+        let hlsObj = hlsSources[media.dataset.hlsSrc];
         if (hlsObj) {
             hlsObj.detachMedia()
             hlsObj.destroy()
-            delete hlsSources[elem.dataset.hlsSrc]
+            delete hlsSources[media.dataset.hlsSrc]
         }
     }
 }
@@ -209,7 +213,9 @@ async function startSlideShow(root) {
                         nextSlide(vidDiv)
                     })
                 }
-                replaceSlide(root, vidDiv, toRemove.pop(), slide.scaledWidth)
+                const slideInfo = { url: slide.url || slide.hls, name: slide.name || slide.droppedFile?.name, format: 'video', source: slide.url ? 'reddit' : 'local', width: slide.width, height: slide.height }
+                const wrappedVid = wrapSlide(vidDiv, slideInfo)
+                replaceSlide(root, wrappedVid, toRemove.pop(), slide.scaledWidth)
                 let timeout;
                 if (slide.type === 'long') {
                     vidDiv.currentTime = slide.start
@@ -254,11 +260,13 @@ async function startSlideShow(root) {
                 } else if (slide.url) {
                     imgDiv.src = slide.url
                 }
-                replaceSlide(root, imgDiv, toRemove.pop(), slide.scaledWidth)
-                const timeout = setTimeout(() => nextSlide(imgDiv), jitter(settings.imageInterval*1000))
+                const imgSlideInfo = { url: slide.url, name: slide.name || slide.droppedFile?.name, format: 'image', source: slide.url ? 'reddit' : 'local', width: slide.width, height: slide.height }
+                const wrappedImg = wrapSlide(imgDiv, imgSlideInfo)
+                replaceSlide(root, wrappedImg, toRemove.pop(), slide.scaledWidth)
+                const timeout = setTimeout(() => nextSlide(wrappedImg), jitter(settings.imageInterval*1000))
                 imgDiv.onclick = () => {
                     clearTimeout(timeout)
-                    nextSlide(imgDiv)
+                    nextSlide(wrappedImg)
                 }
             } else if (slide.format == "iframe") {
                 let iframeDiv = parseIframe(slide.html)
@@ -328,6 +336,19 @@ async function changeGrid() {
     }
 }
 
+async function openFavorites() {
+    startFavSlides()
+    for (const e of document.getElementsByClassName("titleContent")) {
+        e.style.display = 'none'
+    }
+    inProgress = true
+    slidesFetcher = nextFavSlides
+    slidesRestarter = restartFavSlides
+    for (const e of document.getElementsByClassName("slideshow-row")) {
+        await startSlideShow(e)
+    }
+}
+
 async function openDropped(droppedItems) {
     try {
         for (const e of document.getElementsByClassName("titleContent")) {
@@ -363,4 +384,7 @@ window.onload = () => {
     initSettings(changeGrid, goHome)
     initReddit()
     initDragDrop(openDropped)
+    initFavorites()
+    const favCard = document.getElementById('browseFavorites')
+    if (favCard) favCard.onclick = openFavorites
 }
