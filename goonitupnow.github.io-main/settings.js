@@ -1,7 +1,7 @@
 let defaultSettings = {
     imageInterval: 20,
     rows: 2,
-    volume: 0,
+    volume: 1.0,
     videoSplittingTime: 60,
     bgColor: "0a0a0b"
 }
@@ -65,7 +65,6 @@ function initVolume() {
     range.oninput = function() {
         settings.volume = this.value / 100
         for (let v of document.getElementsByClassName("videoSlide")) {
-            v.muted = settings.volume === 0
             v.volume = settings.volume
         }
     }
