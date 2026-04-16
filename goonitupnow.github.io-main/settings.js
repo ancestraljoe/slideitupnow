@@ -245,7 +245,7 @@ function skipSlideInRow(direction) {
     const children = Array.from(row.children)
     if (children.length === 0) return
     const target = direction === 'right' ? children[children.length - 1] : children[0]
-    if (target) target.click()
+    if (target?._skipSlide) target._skipSlide()
 }
 
 export function resetRowFocus() {

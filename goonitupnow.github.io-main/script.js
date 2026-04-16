@@ -229,6 +229,10 @@ async function startSlideShow(root) {
                         nextSlide(wrappedVid)
                     })
                 }
+                wrappedVid._skipSlide = () => {
+                    if (timeout) clearTimeout(timeout)
+                    nextSlide(wrappedVid)
+                }
                 replaceSlide(root, wrappedVid, toRemove.pop(), slide.scaledWidth)
                 let timeout;
                 if (slide.type === 'long') {
@@ -276,6 +280,10 @@ async function startSlideShow(root) {
                 }
                 const imgSlideInfo = { url: slide.url, name: slide.name || slide.droppedFile?.name, format: 'image', source: slide.url ? 'reddit' : 'local', width: slide.width, height: slide.height }
                 const wrappedImg = wrapSlide(imgDiv, imgSlideInfo)
+                wrappedImg._skipSlide = () => {
+                    clearTimeout(timeout)
+                    nextSlide(wrappedImg)
+                }
                 replaceSlide(root, wrappedImg, toRemove.pop(), slide.scaledWidth)
                 const timeout = setTimeout(() => nextSlide(wrappedImg), jitter(settings.imageInterval*1000))
                 imgDiv.onclick = () => {
