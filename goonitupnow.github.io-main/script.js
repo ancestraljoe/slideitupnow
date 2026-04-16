@@ -218,26 +218,28 @@ async function startSlideShow(root) {
                     hls.on(Hls.Events.MANIFEST_PARSED, function() {
                         vidDiv.play();
                     });
-                    hls.on(Hls.Events.ERROR, () => {
-                        if (timeout) {
-                            clearTimeout(timeout)
-                        }
-                        nextSlide(vidDiv)
-                    })
                 }
                 const slideInfo = { url: slide.url || slide.hls, name: slide.name || slide.droppedFile?.name, format: 'video', source: slide.url ? 'reddit' : 'local', width: slide.width, height: slide.height }
                 const wrappedVid = wrapSlide(vidDiv, slideInfo)
+                if (slide.hls) {
+                    hlsSources[slide.hls].on(Hls.Events.ERROR, () => {
+                        if (timeout) {
+                            clearTimeout(timeout)
+                        }
+                        nextSlide(wrappedVid)
+                    })
+                }
                 replaceSlide(root, wrappedVid, toRemove.pop(), slide.scaledWidth)
                 let timeout;
                 if (slide.type === 'long') {
                     vidDiv.currentTime = slide.start
-                    timeout = setTimeout(() => nextSlide(vidDiv), settings.videoSplittingTime*1000)
+                    timeout = setTimeout(() => nextSlide(wrappedVid), settings.videoSplittingTime*1000)
                 }
                 vidDiv.addEventListener("ended", () => {
                     if (timeout) {
                         clearTimeout(timeout)
                     }
-                    nextSlide(vidDiv)
+                    nextSlide(wrappedVid)
                 }, false)
                 let clickTimer = null
                 vidDiv.onclick = (e) => {
@@ -247,7 +249,7 @@ async function startSlideShow(root) {
                         clearTimeout(clickTimer)
                         clickTimer = null
                         if (timeout) clearTimeout(timeout)
-                        nextSlide(vidDiv)
+                        nextSlide(wrappedVid)
                     } else {
                         // Single click: toggle pause/play (after short delay to detect double)
                         clickTimer = setTimeout(() => {
