@@ -1,5 +1,6 @@
 import { initSettings, settings, setIsPaused } from './settings.js';
-import { showPicker, loadFiles, nextFileSlides, current, total, restartSlides, resetFiles } from './localFiles.js';
+import { showPicker, loadFiles, loadDroppedFiles, nextFileSlides, current, total, restartSlides, resetFiles } from './localFiles.js';
+import { initDragDrop } from './dragdrop.js';
 import { startReddit, nextRedditSlides, initReddit, resetReddit } from './reddit.js';
 
 const DEBOUNCE_MS = 100;
@@ -178,7 +179,12 @@ async function startSlideShow(root) {
                 vidDiv.className = "videoSlide"
                 vidDiv.setAttribute("controls", "true")
                 vidDiv.muted = true
-                if (slide.file) {
+                if (slide.droppedFile) {
+                    vidDiv.src = URL.createObjectURL(slide.droppedFile)
+                    vidDiv.setAttribute("data-is-object", "true")
+                    vidDiv.currentTime = 0
+                    vidDiv.play()
+                } else if (slide.file) {
                     vidDiv.src = URL.createObjectURL(await slide.file.getFile())
                     vidDiv.setAttribute("data-is-object", "true")
                     vidDiv.currentTime = 0
@@ -239,7 +245,10 @@ async function startSlideShow(root) {
             } else if (slide.format == "image") {
                 let imgDiv = document.createElement("img")
                 imgDiv.className = "imgSlide"
-                if (slide.file) {
+                if (slide.droppedFile) {
+                    imgDiv.src = URL.createObjectURL(slide.droppedFile)
+                    imgDiv.setAttribute("data-is-object", "true")
+                } else if (slide.file) {
                     imgDiv.src = URL.createObjectURL(await slide.file.getFile())
                     imgDiv.setAttribute("data-is-object", "true")
                 } else if (slide.url) {
@@ -319,6 +328,26 @@ async function changeGrid() {
     }
 }
 
+async function openDropped(droppedItems) {
+    try {
+        for (const e of document.getElementsByClassName("titleContent")) {
+            e.style.display = 'none'
+        }
+        showLoader("Loading dropped files...")
+        await loadDroppedFiles(droppedItems)
+        inProgress = true
+        slidesFetcher = nextFileSlides
+        slidesRestarter = restartSlides
+        for (const e of document.getElementsByClassName("slideshow-row")) {
+            await startSlideShow(e)
+        }
+        hideLoader()
+    } catch(e) {
+        console.log(e)
+        hideLoader()
+    }
+}
+
 function showRedditForm() {
     for(let elem of document.getElementsByClassName("noForm")) {
         elem.style.display = 'none'
@@ -333,4 +362,5 @@ window.onload = () => {
     document.getElementById("redditSubmit").onclick = openReddit
     initSettings(changeGrid, goHome)
     initReddit()
+    initDragDrop(openDropped)
 }

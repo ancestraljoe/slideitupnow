@@ -164,6 +164,31 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   margin: 0 0 40px;
 }
 
+/* Drop overlay */
+#drop-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: rgba(124, 58, 237, 0.1);
+  border: 3px dashed var(--accent);
+  border-radius: var(--radius-lg);
+  margin: 16px;
+  justify-content: center;
+  align-items: center;
+}
+
+#drop-overlay.visible {
+  display: flex;
+}
+
+.drop-content {
+  font-size: clamp(18px, 3vw, 24px);
+  color: var(--accent);
+  font-weight: 500;
+  pointer-events: none;
+}
+
 .source-cards {
   display: flex;
   gap: 16px;
