@@ -54,7 +54,6 @@ async function loadNextPage(slideDefinition) {
     let url = baseUrl + slideDefinition.subreddits + urlSuffix + (slideDefinition.after ? "&after=" + slideDefinition.after : "")
     try {
         const response = await fetch(url)
-        if (!response.ok) throw new Error('Reddit returned ' + response.status)
         const jsonResp = await response.json()
         let metadataPromises = []
         slideDefinition.after = jsonResp.data.after
