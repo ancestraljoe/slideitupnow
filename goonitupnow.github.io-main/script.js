@@ -2,11 +2,13 @@ import { initSettings, settings, setIsPaused } from './settings.js';
 import { showPicker, loadFiles, loadDroppedFiles, nextFileSlides, current, total, restartSlides, resetFiles } from './localFiles.js';
 import { initDragDrop } from './dragdrop.js';
 import { initFavorites, wrapSlide, startFavSlides, nextFavSlides, restartFavSlides } from './favorites.js';
+import { renderPlaylistChips, renderPlaylistSettings, promptSavePlaylist } from './playlists.js';
 import { startReddit, nextRedditSlides, initReddit, resetReddit } from './reddit.js';
 
 const DEBOUNCE_MS = 100;
 
 let inProgress = false;
+let currentSourceConfig = null;
 let slidesFetcher;
 let slidesRestarter;
 let hlsSources = {};
@@ -31,6 +33,7 @@ async function openDir2() {
         showLoader("Loading files...")
         await loadFiles(folder)
         inProgress = true
+        currentSourceConfig = { type: 'local', folderName: folder.name || 'Local' }
         slidesFetcher = nextFileSlides
         slidesRestarter = restartSlides
         for (const e of document.getElementsByClassName("slideshow-row")) {
@@ -51,6 +54,13 @@ async function openReddit() {
         }
         hideLoader()
         inProgress = true
+        currentSourceConfig = {
+            type: 'reddit',
+            subreddits: Array.from(document.getElementsByClassName("pickedSubreddit")).map(e => e.innerText.trim()),
+            sort: document.getElementById("redditSort").value,
+            time: document.getElementById("redditTime").value,
+            roundRobin: document.getElementById("roundRobin").checked
+        }
         slidesFetcher = nextRedditSlides
         for (const e of document.getElementsByClassName("slideshow-row")) {
             await startSlideShow(e)
@@ -104,6 +114,7 @@ function goHome() {
     if (!inProgress) return
     disposeAllResources()
     inProgress = false
+    currentSourceConfig = null
     setIsPaused(false)
     slidesFetcher = null
     slidesRestarter = null
@@ -125,6 +136,7 @@ function goHome() {
     for (const e of document.getElementsByClassName("noForm")) {
         e.style.display = null
     }
+    refreshPlaylists()
 }
 
 function replaceSlide(parent, newElem, oldElem, newWidth){
@@ -369,6 +381,31 @@ async function openDropped(droppedItems) {
     }
 }
 
+function refreshPlaylists() {
+    const container = document.getElementById('playlistsSection')
+    if (container) renderPlaylistChips(container, onPlaylistClick)
+}
+
+async function onPlaylistClick(playlist) {
+    if (playlist.type === 'reddit') {
+        // Fill the reddit form and submit
+        const pickedSubreddits = document.getElementById("pickedSubreddits")
+        pickedSubreddits.textContent = ''
+        for (const sub of playlist.subreddits) {
+            const divElem = document.createElement("div")
+            const spanElem = document.createElement("span")
+            spanElem.className = "pickedSubreddit"
+            spanElem.textContent = sub
+            divElem.appendChild(spanElem)
+            pickedSubreddits.appendChild(divElem)
+        }
+        document.getElementById("redditSort").value = playlist.sort || 'hot'
+        document.getElementById("redditTime").value = playlist.time || 'day'
+        document.getElementById("roundRobin").checked = !!playlist.roundRobin
+        await openReddit()
+    }
+}
+
 function showRedditForm() {
     for(let elem of document.getElementsByClassName("noForm")) {
         elem.style.display = 'none'
@@ -387,4 +424,11 @@ window.onload = () => {
     initFavorites()
     const favCard = document.getElementById('browseFavorites')
     if (favCard) favCard.onclick = openFavorites
+
+    // Playlists
+    refreshPlaylists()
+    renderPlaylistSettings(document.getElementById('playlistsSettingsGroup'))
+    document.getElementById('savePlaylist').onclick = () => {
+        if (currentSourceConfig) promptSavePlaylist(currentSourceConfig)
+    }
 }

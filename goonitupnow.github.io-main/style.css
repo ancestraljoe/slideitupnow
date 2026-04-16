@@ -225,6 +225,58 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   vertical-align: middle;
 }
 
+/* Playlist chips on welcome */
+.playlists-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.playlist-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.playlist-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.playlist-chip:hover {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.chip-icon { font-size: 16px; }
+
+#playlistsSection {
+  margin-top: 16px;
+}
+
+.btn-danger {
+  color: var(--danger) !important;
+  border-color: var(--danger) !important;
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
 /* Drop overlay */
 #drop-overlay {
   display: none;
