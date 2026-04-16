@@ -212,6 +212,49 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   margin: 0;
 }
 
+/* Ahegao corner images */
+#ahegao-left {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 420px;
+  opacity: 0.25;
+  pointer-events: none;
+  animation: floatLeft 4s ease-in-out infinite;
+  transform-origin: bottom left;
+}
+
+#ahegao-right {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 350px;
+  opacity: 0.25;
+  pointer-events: none;
+  animation: floatRight 4.5s ease-in-out infinite;
+  transform-origin: bottom right;
+}
+
+@keyframes floatLeft {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(1deg); }
+}
+
+@keyframes floatRight {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-8px) rotate(-1deg); }
+}
+
+@media (max-width: 768px) {
+  #ahegao-left { width: 200px; }
+  #ahegao-right { width: 180px; }
+}
+
+@media (max-height: 600px) {
+  #ahegao-left { width: 200px; }
+  #ahegao-right { width: 170px; }
+}
+
 /* Loading spinner */
 #load-container {
   display: none;
