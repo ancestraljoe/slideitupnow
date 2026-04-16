@@ -140,9 +140,21 @@ function setImageInterval(event) {
 }
 
 function applySettings() {
+    // Read all current values from the form
+    settings.rows = getPositiveValue(document.getElementById("rows"))
+    settings.imageInterval = getPositiveValue(document.getElementById("nextImageSec"))
     settings.videoSplittingTime = getPositiveValue(document.getElementById("videoSplitLength"))
+
+    // Apply background color
+    const bgColor = document.getElementById("backgroundColor").value.trim()
+    if (/^[0-9a-f]{6}$/i.test(bgColor)) {
+        settings.bgColor = bgColor
+        document.body.style.backgroundColor = "#" + bgColor
+    }
+
     saveSettings()
-    document.location.reload()
+    gridChanged()
+    closeSettings()
 }
 
 // --- Settings modal ---
