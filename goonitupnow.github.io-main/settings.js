@@ -211,14 +211,47 @@ function initRedditBack() {
     }
 }
 
+// --- Row focus system ---
+let focusedRowIndex = 0
+
+function updateRowFocus() {
+    const rows = document.getElementsByClassName("slideshow-row")
+    for (let i = 0; i < rows.length; i++) {
+        rows[i].classList.toggle('focused', i === focusedRowIndex)
+    }
+}
+
+function focusRow(index) {
+    const rows = document.getElementsByClassName("slideshow-row")
+    if (index >= 0 && index < rows.length) {
+        focusedRowIndex = index
+        updateRowFocus()
+    }
+}
+
+function skipSlideInRow(direction) {
+    const rows = document.getElementsByClassName("slideshow-row")
+    if (focusedRowIndex >= rows.length) return
+    const row = rows[focusedRowIndex]
+    const children = Array.from(row.children)
+    if (children.length === 0) return
+    const target = direction === 'right' ? children[children.length - 1] : children[0]
+    if (target) target.click()
+}
+
+export function resetRowFocus() {
+    focusedRowIndex = 0
+}
+
 // --- Keyboard shortcuts ---
 function initKeyboard(onGoHome) {
     document.addEventListener("keydown", (e) => {
         const tag = document.activeElement.tagName.toLowerCase()
         if (tag === "input" || tag === "textarea" || tag === "select") return
 
-        switch (e.key.toLowerCase()) {
+        switch (e.key) {
             case "f":
+            case "F":
                 e.preventDefault()
                 toggleFullscreen()
                 break
@@ -227,15 +260,63 @@ function initKeyboard(onGoHome) {
                 togglePause()
                 break
             case "t":
+            case "T":
                 e.preventDefault()
                 toggleTheme()
                 break
-            case "escape":
+            case "Escape":
                 closeSettings()
                 break
             case "h":
+            case "H":
                 e.preventDefault()
                 onGoHome()
+                break
+            case "s":
+            case "S":
+                e.preventDefault()
+                const overlay = document.getElementById("settingsOverlay")
+                overlay.classList.contains("open") ? closeSettings() : openSettings()
+                break
+            case "ArrowRight":
+                e.preventDefault()
+                skipSlideInRow('right')
+                break
+            case "ArrowLeft":
+                e.preventDefault()
+                skipSlideInRow('left')
+                break
+            case "ArrowUp":
+                e.preventDefault()
+                focusRow(focusedRowIndex - 1)
+                break
+            case "ArrowDown":
+                e.preventDefault()
+                focusRow(focusedRowIndex + 1)
+                break
+            case "+":
+            case "=":
+                e.preventDefault()
+                settings.rows++
+                document.getElementById("rows").value = settings.rows
+                saveSettings()
+                gridChanged()
+                break
+            case "-":
+                e.preventDefault()
+                if (settings.rows > 1) {
+                    settings.rows--
+                    document.getElementById("rows").value = settings.rows
+                    saveSettings()
+                    gridChanged()
+                }
+                break
+            default:
+                // Number keys 1-9 to focus rows
+                if (e.key >= '1' && e.key <= '9') {
+                    e.preventDefault()
+                    focusRow(parseInt(e.key) - 1)
+                }
                 break
         }
     })
