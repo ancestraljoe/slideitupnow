@@ -65,6 +65,7 @@ function initVolume() {
     range.oninput = function() {
         settings.volume = this.value / 100
         for (let v of document.getElementsByClassName("videoSlide")) {
+            v.muted = settings.volume === 0
             v.volume = settings.volume
         }
     }

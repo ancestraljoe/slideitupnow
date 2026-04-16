@@ -177,7 +177,7 @@ async function startSlideShow(root) {
                 let vidDiv = document.createElement("video")
                 vidDiv.className = "videoSlide"
                 vidDiv.setAttribute("controls", "true")
-                vidDiv.volume = settings.volume
+                vidDiv.muted = true
                 if (slide.file) {
                     vidDiv.src = URL.createObjectURL(await slide.file.getFile())
                     vidDiv.setAttribute("data-is-object", "true")
