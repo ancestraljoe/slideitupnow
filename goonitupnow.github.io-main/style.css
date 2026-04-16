@@ -1,45 +1,66 @@
 /* =====================================================
-   CSS Variables — Anime/Pastel Design System
+   CSS Variables — Dark Minimal Design System
    ===================================================== */
 :root {
-    --color-pink: #ffc0cb;
-    --color-pink-dark: #e8859a;
-    --color-pink-light: #ffe4ec;
-    --color-pink-ultra-light: #fff0f5;
-    --color-accent: #ff99cc;
-    --color-text-menu: #ffe0e8;
-    --color-overlay: rgba(255, 150, 180, 0.18);
-    --color-overlay-dark: rgba(0, 0, 0, 0.4);
-    --color-dialog-bg: #fff0f5;
-    --color-dialog-border: #e8859a;
-    --color-badge-bg: #ffb6d9;
-    --color-badge-border: #e8859a;
-    --font-cursive: 'Brush Script MT', cursive;
-    --transition-fast: 150ms ease;
-    --transition-med: 300ms ease;
-    --border-radius-sm: 8px;
-    --border-radius-md: 14px;
-    --border-radius-pill: 999px;
-    --shadow-pastel: 0 4px 24px rgba(232, 133, 154, 0.25);
-    --shadow-pastel-sm: 0 2px 10px rgba(232, 133, 154, 0.2);
+  --bg-primary: #0a0a0b;
+  --bg-surface: #141416;
+  --bg-elevated: #1c1c1f;
+  --border: #27272a;
+  --border-hover: #3f3f46;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --accent: #7c3aed;
+  --accent-hover: #6d28d9;
+  --accent-subtle: rgba(124, 58, 237, 0.15);
+  --danger: #ef4444;
+  --success: #22c55e;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --transition-fast: 120ms ease;
+  --transition-med: 250ms ease;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
+  --font-main: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+[data-theme="light"] {
+  --bg-primary: #fafafa;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f4f4f5;
+  --border: #e4e4e7;
+  --border-hover: #d4d4d8;
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #a1a1aa;
+  --accent-subtle: rgba(124, 58, 237, 0.1);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
 }
 
 /* =====================================================
    Base
    ===================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
 html, body {
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 body {
-    background-color: var(--color-pink);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    font-family: var(--font-cursive);
+  background-color: var(--bg-primary);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  font-family: var(--font-main);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
 }
 
 /* =====================================================
@@ -48,561 +69,744 @@ body {
 button, a, select,
 input[type="radio"],
 input[type="checkbox"],
-#volumeSlider {
-    cursor: pointer;
+input[type="range"],
+label[for] {
+  cursor: pointer;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* =====================================================
    Slideshow Grid
    ===================================================== */
 #slideshow-grid {
-    width: 100%;
-    max-width: 100%;
-    height: 100%;
-    display: none;
-    float: left;
-    position: absolute;
-    z-index: 1;
-    flex-direction: column;
+  width: 100%;
+  height: 100%;
+  display: none;
+  position: absolute;
+  z-index: 1;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
 }
 
 .slideshow-row {
-    width: 100%;
-    height: 100%;
-    display: none;
-    justify-content: space-evenly;
-    align-items: center;
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: space-evenly;
+  align-items: center;
+  background: var(--bg-primary);
 }
 
 .imgSlide {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  height: 100%;
 }
 
 .videoSlide {
-    max-width: 100%;
-    max-height: 100%;
-    height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  height: 100%;
 }
 
 .iframeSlide {
-    max-width: 100%;
-    max-height: 100%;
-    height: 100%;
-    display: inline-flex;
+  max-width: 100%;
+  max-height: 100%;
+  height: 100%;
+  display: inline-flex;
 }
 
 /* =====================================================
    Welcome Screen
    ===================================================== */
 #welcome {
-    float: left;
-    display: flex;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 #welcomeArea {
-    text-align: center;
-    padding: 0 20px;
-    box-sizing: border-box;
-    width: 100%;
-    position: relative;
-    z-index: 2;
+  text-align: center;
+  padding: 0 24px;
+  width: 100%;
+  max-width: 560px;
+  position: relative;
+  z-index: 2;
 }
 
-#welcomeArea svg {
-    width: 75px;
-    margin-top: 250px;
+#welcomeArea h1 {
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 200;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+  letter-spacing: -0.5px;
 }
 
-/* Title fade-in */
-img.titleContent {
-    animation: fadeInDown 0.7s ease both;
+#welcomeArea .subtitle {
+  font-size: clamp(14px, 2.5vw, 16px);
+  color: var(--text-muted);
+  margin: 0 0 40px;
 }
 
-p.titleContent {
-    animation: fadeInDown 0.9s ease both;
-    color: #fff;
-    text-shadow: 0 1px 4px rgba(180, 60, 90, 0.6), 0 0 12px rgba(255, 100, 130, 0.3);
-    font-size: 28px;
-    font-weight: bold;
+.source-cards {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 32px;
 }
 
-/* Ahegao corner images */
-#ahegao-left {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 480px;
-    animation: floatLeft 4s ease-in-out infinite;
-    transform-origin: bottom left;
+.source-card {
+  flex: 1;
+  max-width: 220px;
+  padding: 28px 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-med);
+  text-align: center;
+  font-family: inherit;
+  color: var(--text-primary);
+  font-size: 16px;
 }
 
-#ahegao-right {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 400px;
-    animation: floatRight 4.5s ease-in-out infinite;
-    transform-origin: bottom right;
+.source-card:hover {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
+.source-card:active {
+  transform: translateY(0);
+}
+
+.source-card .card-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.source-card .card-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.source-card .card-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+#welcomeArea .privacy-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Loading spinner */
 #load-container {
-    position: relative;
-    display: none;
-    width: 80px;
-    margin: 0 auto;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+  padding: 40px 0;
 }
 
-#load-left {
-    position: absolute;
-    width: 300px;
-    left: -190px;
-    top: -70px;
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
-#load-right {
-    position: absolute;
-    width: 200px;
-    left: 45px;
-    top: 40px;
+#load-text {
+  font-size: 14px;
+  color: var(--text-muted);
 }
 
-/* =====================================================
-   Buttons
-   ===================================================== */
-.browse {
-    padding: 9px 22px;
-    font-family: inherit;
-    font-size: 25px;
-    background: linear-gradient(135deg, var(--color-pink) 0%, var(--color-accent) 100%);
-    border: 2px solid var(--color-pink-dark);
-    border-radius: var(--border-radius-md);
-    color: #fff;
-    text-shadow: 0 1px 3px rgba(180, 60, 90, 0.3);
-    box-shadow: var(--shadow-pastel-sm);
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
-}
-
-.browse:hover {
-    transform: scale(1.04);
-    box-shadow: var(--shadow-pastel);
-    filter: brightness(1.05);
-}
-
-.browse:active {
-    transform: scale(0.97);
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* =====================================================
-   Menu (top-right hover zone)
+   Menu Toolbar (auto-hide, centered top)
    ===================================================== */
-#menu-hover {
-    position: absolute;
-    right: 0;
-    width: 300px;
-    height: 200px;
-    z-index: 3;
+#menu-toolbar {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: rgba(20, 20, 22, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  opacity: 1;
+  transition: opacity var(--transition-med), transform var(--transition-med);
 }
 
-#menu {
-    color: var(--color-text-menu);
-    position: relative;
-    float: right;
+[data-theme="light"] #menu-toolbar {
+  background: rgba(255, 255, 255, 0.85);
 }
 
-#menu-tip {
-    font-size: 35px;
+#menu-toolbar.hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-20px);
+  pointer-events: none;
 }
 
-#menu-tip > div:nth-child(1) {
-    position: absolute;
-    transform: rotate(30deg);
-    top: 50px;
-    left: 50px;
-    color: #fff;
-    text-shadow: 0 1px 6px rgba(232, 133, 154, 0.5);
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
 }
 
-#menu-tip > div:nth-child(2) {
-    position: absolute;
-    top: 40px;
-    left: 150px;
-    transform: rotate(-20deg);
+.toolbar-btn:hover {
+  background: var(--accent-subtle);
+  color: var(--text-primary);
 }
 
-#menu-tip img {
-    width: 100px;
-    filter: drop-shadow(0 2px 4px rgba(232, 133, 154, 0.4));
+.toolbar-btn:active {
+  transform: scale(0.96);
 }
 
-#bar {
-    background: var(--color-overlay);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 192, 203, 0.35);
-    border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
-    padding: 4px 10px 6px 10px;
-    z-index: 2;
-    animation: slideInMenu var(--transition-med) ease;
+.toolbar-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 2px;
 }
 
-#bar a {
-    transition: color var(--transition-fast), text-shadow var(--transition-fast);
+/* Volume range in toolbar */
+#volumeRange {
+  width: 80px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
 }
 
-#bar a:hover {
-    color: #fff;
-    text-shadow: 0 0 8px rgba(255, 150, 180, 0.8);
+#volumeRange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  transition: transform var(--transition-fast);
 }
 
-#volumeControl {
-    width: 40px;
-    height: 150px;
-    background: var(--color-overlay);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 192, 203, 0.35);
-    border-radius: var(--border-radius-sm) 0 0 var(--border-radius-sm);
-    float: right;
-    position: relative;
-    z-index: 2;
+#volumeRange::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
 }
 
-a {
-    color: var(--color-text-menu);
-    text-decoration: none;
+#volumeRange::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  cursor: pointer;
 }
 
 /* =====================================================
-   Settings Dialog
+   Settings Modal
    ===================================================== */
+#settingsOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 20;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(4px);
+}
+
+#settingsOverlay.open {
+  display: flex;
+}
+
 #settingsDialog {
-    width: 500px;
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: var(--color-dialog-bg);
-    border: 2px solid var(--color-dialog-border);
-    border-radius: var(--border-radius-md);
-    padding: 24px;
-    z-index: 3;
-    display: none;
-    box-shadow: var(--shadow-pastel), 0 0 0 4px rgba(255, 192, 203, 0.15);
+  width: 480px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  box-shadow: var(--shadow-lg);
 }
 
-#settingsDialog h3 {
-    color: var(--color-pink-dark);
-    margin: 10px 0 8px;
-    font-size: 20px;
-    letter-spacing: 0.5px;
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
 }
 
-#settingsClose {
-    float: right;
-    z-index: 4;
-    position: relative;
-    top: -10px;
+.settings-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
 }
 
-#settingsClose a {
-    color: var(--color-pink-dark);
-    font-size: 18px;
-    transition: color var(--transition-fast), transform var(--transition-fast);
-    display: inline-block;
+.settings-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 18px;
+  transition: all var(--transition-fast);
 }
 
-#settingsClose a:hover {
-    color: #c0304a;
-    transform: scale(1.2);
+.settings-close:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
 }
 
-.settingsRow {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 7px;
+.settings-body {
+  padding: 16px 24px 24px;
 }
 
-.settingsRow input[type="text"],
-.settingsRow input[type="number"] {
-    border: 1.5px solid var(--color-dialog-border);
-    border-radius: var(--border-radius-sm);
-    padding: 3px 7px;
-    background: #fff;
-    font-family: var(--font-cursive);
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-    outline: none;
+.settings-section {
+  margin-bottom: 20px;
 }
 
-.settingsRow input[type="text"]:focus,
-.settingsRow input[type="number"]:focus {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px rgba(255, 153, 204, 0.25);
+.settings-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+}
+
+.settings-group {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 2px 0;
+}
+
+.settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+}
+
+.settings-row + .settings-row {
+  border-top: 1px solid var(--border);
+}
+
+.settings-row label {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.settings-row input[type="number"],
+.settings-row input[type="text"] {
+  width: 100px;
+  padding: 6px 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color var(--transition-fast);
+}
+
+.settings-row input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.settings-row input[type="file"] {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.settings-row input[type="file"]::file-selector-button {
+  padding: 4px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+/* Segmented control for fit mode */
+.segmented-control {
+  display: flex;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.segmented-control input[type="radio"] {
+  display: none;
+}
+
+.segmented-control label {
+  padding: 6px 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  border-right: 1px solid var(--border);
+}
+
+.segmented-control label:last-of-type {
+  border-right: none;
+}
+
+.segmented-control input:checked + label {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Theme toggle in settings */
+.theme-toggle-group {
+  display: flex;
+  gap: 8px;
+}
+
+.theme-option {
+  flex: 1;
+  padding: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.theme-option:hover {
+  border-color: var(--border-hover);
+}
+
+.theme-option.active {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+  color: var(--text-primary);
+}
+
+.settings-row .btn-small {
+  padding: 6px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  transition: all var(--transition-fast);
+}
+
+.settings-row .btn-small:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
 }
 
 #settingsApply {
-    margin-top: 12px;
-    width: 100%;
-    padding: 10px;
-    background: linear-gradient(135deg, var(--color-pink) 0%, var(--color-accent) 100%);
-    border: 2px solid var(--color-pink-dark);
-    border-radius: var(--border-radius-md);
-    color: #fff;
-    font-family: var(--font-cursive);
-    font-size: 18px;
-    text-shadow: 0 1px 3px rgba(180, 60, 90, 0.3);
-    box-shadow: var(--shadow-pastel-sm);
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+  width: 100%;
+  padding: 12px;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  margin-top: 4px;
 }
 
 #settingsApply:hover {
-    transform: scale(1.02);
-    box-shadow: var(--shadow-pastel);
-    filter: brightness(1.05);
+  background: var(--accent-hover);
+  box-shadow: var(--shadow-sm);
 }
 
 #settingsApply:active {
-    transform: scale(0.97);
-}
-
-#clearBackgroundImage {
-    border: 1.5px solid var(--color-dialog-border);
-    border-radius: var(--border-radius-sm);
-    background: var(--color-pink-ultra-light);
-    padding: 3px 10px;
-    font-family: var(--font-cursive);
-    color: var(--color-pink-dark);
-    transition: background var(--transition-fast), transform var(--transition-fast);
-}
-
-#clearBackgroundImage:hover {
-    background: var(--color-pink-light);
-    transform: scale(1.03);
-}
-
-.settingsRow.sub {
-    margin-left: 20px;
-    display: block;
-}
-
-.settingsRow.sub span:first-of-type {
-    width: 50px;
-    display: inline-block;
+  transform: scale(0.98);
 }
 
 /* =====================================================
    Reddit Form
    ===================================================== */
 #redditForm {
-    width: 300px;
-    margin: 0 auto;
-    color: #fff;
-    text-shadow: 0 1px 3px rgba(180, 60, 90, 0.5);
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: left;
 }
 
-#redditForm label {
-    font-size: 20px;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 0 1px 4px rgba(150, 40, 70, 0.7);
-    letter-spacing: 0.5px;
+#redditForm .form-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 14px;
+  padding: 8px 0;
+  margin-bottom: 16px;
+  transition: color var(--transition-fast);
+}
+
+#redditForm .form-back:hover {
+  color: var(--text-primary);
+}
+
+#redditForm h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 20px;
+  text-align: center;
 }
 
 #redditForm > div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+#redditForm label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 #redditForm input[type="text"],
 #redditForm select {
-    border: 1.5px solid var(--color-dialog-border);
-    border-radius: var(--border-radius-sm);
-    padding: 4px 8px;
-    background: rgba(255,255,255,0.85);
-    font-family: var(--font-cursive);
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-    outline: none;
+  padding: 8px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color var(--transition-fast);
 }
 
 #redditForm input[type="text"]:focus,
 #redditForm select:focus {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px rgba(255, 153, 204, 0.25);
+  border-color: var(--accent);
+  outline: none;
 }
 
 #subredditAdd {
-    border: 1.5px solid var(--color-dialog-border);
-    border-radius: var(--border-radius-sm);
-    background: var(--color-pink-light);
-    padding: 4px 10px;
-    font-family: var(--font-cursive);
-    color: var(--color-pink-dark);
-    transition: background var(--transition-fast), transform var(--transition-fast);
+  padding: 8px 14px;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  transition: all var(--transition-fast);
 }
 
 #subredditAdd:hover {
-    background: var(--color-badge-bg);
-    transform: scale(1.04);
+  background: var(--accent-hover);
+}
+
+#subredditError {
+  color: var(--danger);
+  font-size: 13px;
+  text-align: right;
 }
 
 #pickedSubreddits {
-    text-align: right;
+  text-align: right;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
 }
 
-/* Subreddit badge pills */
 #pickedSubreddits .pickedSubreddit {
-    display: inline-block;
-    background: var(--color-badge-bg);
-    border: 1px solid var(--color-badge-border);
-    border-radius: var(--border-radius-pill);
-    padding: 2px 10px;
-    font-size: 14px;
-    color: #7a2040;
-    margin: 2px 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
 #pickedSubreddits button {
-    border: none;
-    background: none;
-    color: var(--color-pink-dark);
-    font-size: 12px;
-    padding: 0 3px;
-    transition: color var(--transition-fast);
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 0 2px;
+  line-height: 1;
+  transition: color var(--transition-fast);
 }
 
 #pickedSubreddits button:hover {
-    color: #c0304a;
+  color: var(--danger);
 }
 
 #redditSubmit {
-    padding: 10px;
-    font-family: inherit;
-    font-size: 25px;
-    width: 100%;
-    background: linear-gradient(135deg, var(--color-pink) 0%, var(--color-accent) 100%);
-    border: 2px solid var(--color-pink-dark);
-    border-radius: var(--border-radius-md);
-    color: #fff;
-    text-shadow: 0 1px 3px rgba(180, 60, 90, 0.3);
-    box-shadow: var(--shadow-pastel-sm);
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+  width: 100%;
+  padding: 12px;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  margin-top: 8px;
 }
 
 #redditSubmit:hover {
-    transform: scale(1.03);
-    box-shadow: var(--shadow-pastel);
-    filter: brightness(1.05);
+  background: var(--accent-hover);
+  box-shadow: var(--shadow-sm);
 }
 
 #redditSubmit:active {
-    transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 /* =====================================================
-   Keyframe Animations
+   Animations
    ===================================================== */
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-18px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes floatLeft {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50%       { transform: translateY(-10px) rotate(1deg); }
-}
-
-@keyframes floatRight {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50%       { transform: translateY(-8px) rotate(-1deg); }
-}
-
-@keyframes slideInMenu {
-    from { opacity: 0; transform: translateX(10px); }
-    to   { opacity: 1; transform: translateX(0); }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* =====================================================
-   Responsive — Portrait Mobile
+   Links
    ===================================================== */
-@media (orientation: portrait) and (max-width: 1000px) {
-    .browse, #redditSubmit {
-        font-size: 80px;
-    }
-    #settingsDialog {
-        width: 90%;
-    }
-    input, button, body, select {
-        font-size: 40px;
-    }
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
 
-    .settingsRow.sub span:first-of-type {
-        width: 150px;
-    }
-
-    .settingsRow input[type="text"], .settingsRow input[type="number"] {
-        width: 250px;
-    }
-
-    .settingsRow input[type="radio"] {
-        width: 30px;
-        height: 30px;
-    }
-
-    img.titleContent {
-        width: 100%;
-    }
-
-    #redditForm {
-        width: 90%;
-    }
-    #menu-hover {
-        width: 600px;
-    }
-    #volumeControl {
-        scale: 2;
-        transform-origin: top right;
-    }
-
-    #menu-tip > div:nth-child(1) {
-        top: 100px;
-        left: 235px;
-    }
-
-    #menu-tip > div:nth-child(2) {
-        top: 94px;
-        left: 370px;
-    }
-
-    #menu-tip {
-        font-size: 55px;
-    }
-
-    #menu-tip img {
-        width: 160px;
-    }
+a:hover {
+  color: var(--accent-hover);
 }
 
 /* =====================================================
-   Responsive — Landscape compact
+   Responsive — Mobile
    ===================================================== */
-@media (orientation: landscape) and (max-height: 600px) {
+@media (max-width: 768px) {
+  .source-cards {
+    flex-direction: column;
+    align-items: center;
+  }
 
-    #ahegao-left {
-        width: 240px;
-    }
+  .source-card {
+    max-width: 100%;
+    width: 100%;
+    padding: 20px;
+  }
 
-    #ahegao-right {
-        width: 200px;
-    }
+  /* Menu at bottom on mobile */
+  #menu-toolbar {
+    top: auto;
+    bottom: 12px;
+    gap: 1px;
+    padding: 3px;
+  }
+
+  .toolbar-btn {
+    padding: 10px 10px;
+    font-size: 0;
+    gap: 0;
+  }
+
+  .toolbar-btn .btn-label {
+    display: none;
+  }
+
+  .toolbar-btn .btn-icon {
+    font-size: 20px;
+  }
+
+  #volumeRange {
+    width: 60px;
+  }
+
+  /* Settings full screen on mobile */
+  #settingsDialog {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+
+  /* Reddit form full width */
+  #redditForm {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+
+  #welcomeArea {
+    padding: 0 16px;
+  }
+}
+
+/* =====================================================
+   Responsive — Large screens
+   ===================================================== */
+@media (min-width: 1200px) {
+  .source-card {
+    max-width: 240px;
+    padding: 32px 24px;
+  }
 }

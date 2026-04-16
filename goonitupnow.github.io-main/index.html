@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Slide It Up Now</title>
+        <title>SlideItUpNow</title>
         <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
         <script type="module" src="script.js"></script>
         <script src="tooltip.js"></script>
@@ -11,72 +11,134 @@
         <link href="tooltip.css" rel="stylesheet">
     </head>
     <body>
-        <div id="menu-hover">
-            <div id="menu" style="display: none;">
-                <div id="bar">
-                    <a href="#" id="settings">settings</a> | <a href="#" id="volume">volume</a> | <a href="#" id="pauseAll">pause</a> | <a href="#" id="fullscreen">fullscreen</a> | <a href="#" id="backHome">home</a>
-                </div>
-                <div id="volumeControl">
-                    <svg width="40" height="150">
-                        <rect width="6" height="130" x="17" y = "10" stroke="lightgray" fill="lightgray"/>
-                        <circle cx="20" cy="16" r="12" stroke="black" fill="white" id="volumeSlider"/>
-                    </svg>
-                </div>
-            </div>
-            <div id="menu-tip">
-                <div>Menu</div>
-                <div><img src="resources/arrow.webp"/></div>
-            </div>
+        <!-- Menu Toolbar (auto-hide) -->
+        <div id="menu-toolbar" class="hidden">
+            <button class="toolbar-btn" id="settings"><span class="btn-icon">&#9881;</span><span class="btn-label">Settings</span></button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" id="volume"><span class="btn-icon">&#128264;</span><span class="btn-label">Volume</span></button>
+            <input type="range" id="volumeRange" min="0" max="100" value="100">
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" id="pauseAll"><span class="btn-icon">&#9208;</span><span class="btn-label">Pause</span></button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" id="fullscreen"><span class="btn-icon">&#9974;</span><span class="btn-label">Fullscreen</span></button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" id="backHome"><span class="btn-icon">&#8962;</span><span class="btn-label">Home</span></button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" id="themeToggle"><span class="btn-icon">&#9789;</span><span class="btn-label">Theme</span></button>
         </div>
-        <div id="settingsDialog">
-            <div id="settingsClose"><a href="#">[x]</a></div>
-            <h3>Instant settings</h3>
-            <div class="settingsRow"><span>Rows</span><input type="number" value="2" id="rows" autocomplete="off"/></div>
-            <div class="settingsRow"><span>Next image (seconds)</span><input type="number" value="20" id="nextImageSec" autocomplete="off"/></div>
-            <div class="settingsRow"><span>Background color (RGB, ffc0cb)</span><input type="text" value="ffc0cb" id="backgroundColor" title="RGB color in format ffffff" autocomplete="off"/></div>
-            <div class="settingsRow"><span>Background image</span></div>
-            <div class="settingsRow sub"><span>Image</span><input type="file" accept=".png,.svg,.jpg,.gif,.webp" id="backgroundImage" autocomplete="off" /></div>
-            <div class="settingsRow sub"><span>Mode</span><span><input type="radio" id="fit" name="imageMode" autocomplete="off" /><label for="fit"> fit</label> 
-            <input type="radio" id="fill" name="imageMode" checked autocomplete="off" /><label for="fill"> fill</label></span></div>
-            <div class="settingsRow sub"><span>Clear</span><button type="button" id="clearBackgroundImage">Clear</button></div>
-            <h3>Settings that require refresh</h3>
-            <div class="settingsRow"><span>Video split length (seconds)</span><input type="number" value="60" id="videoSplitLength" autocomplete="off"/></div>
-            <button id="settingsApply">Apply and refresh</button>
 
+        <!-- Settings Modal -->
+        <div id="settingsOverlay">
+            <div id="settingsDialog">
+                <div class="settings-header">
+                    <h2>Settings</h2>
+                    <button class="settings-close" id="settingsClose">&times;</button>
+                </div>
+                <div class="settings-body">
+                    <!-- Display -->
+                    <div class="settings-section">
+                        <p class="settings-section-title">Display</p>
+                        <div class="settings-group">
+                            <div class="settings-row">
+                                <label for="rows">Rows</label>
+                                <input type="number" value="2" id="rows" min="1" max="10" autocomplete="off">
+                            </div>
+                            <div class="settings-row">
+                                <label for="nextImageSec">Image interval (sec)</label>
+                                <input type="number" value="20" id="nextImageSec" min="1" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Background -->
+                    <div class="settings-section">
+                        <p class="settings-section-title">Background</p>
+                        <div class="settings-group">
+                            <div class="settings-row">
+                                <label for="backgroundColor">Color (hex)</label>
+                                <input type="text" value="0a0a0b" id="backgroundColor" autocomplete="off">
+                            </div>
+                            <div class="settings-row">
+                                <label for="backgroundImage">Image</label>
+                                <input type="file" accept=".png,.svg,.jpg,.gif,.webp" id="backgroundImage" autocomplete="off">
+                            </div>
+                            <div class="settings-row">
+                                <label>Fit mode</label>
+                                <div class="segmented-control">
+                                    <input type="radio" id="fit" name="imageMode" autocomplete="off">
+                                    <label for="fit">Fit</label>
+                                    <input type="radio" id="fill" name="imageMode" checked autocomplete="off">
+                                    <label for="fill">Fill</label>
+                                </div>
+                            </div>
+                            <div class="settings-row">
+                                <label>Clear image</label>
+                                <button class="btn-small" id="clearBackgroundImage">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video -->
+                    <div class="settings-section">
+                        <p class="settings-section-title">Video</p>
+                        <div class="settings-group">
+                            <div class="settings-row">
+                                <label for="videoSplitLength">Split length (sec)</label>
+                                <input type="number" value="60" id="videoSplitLength" min="10" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Theme -->
+                    <div class="settings-section">
+                        <p class="settings-section-title">Theme</p>
+                        <div class="theme-toggle-group">
+                            <button class="theme-option active" id="themeDark" data-theme-value="dark">&#9789; Dark</button>
+                            <button class="theme-option" id="themeLight" data-theme-value="light">&#9788; Light</button>
+                        </div>
+                    </div>
+
+                    <button id="settingsApply">Save &amp; Apply</button>
+                </div>
+            </div>
         </div>
+
+        <!-- Welcome Screen -->
         <div id="welcome">
-            <img id="ahegao-left" src="resources/ahegao left.png"/>
-            <img id="ahegao-right" src="resources/ahegao right.png"/>
             <div id="welcomeArea">
                 <div id="load-container">
-                    <img src="resources/load left.png" id="load-left"/>
-                    <img src="resources/load right.png" id="load-right"/>
-                    <svg viewBox="0 0 90 200" xmlns="http://www.w3.org/2000/svg" id="bucket">
-                        <path id="path" fill="#ffffff" stroke="#aaaaaa" d="
-                            m0,0 v170 C0 180 90 180 90 167 v-130 C60 40 30 0 0 0 z
-                        "></path>
-                        <path fill-opacity="0" stroke="#aaaaaa" stroke-width="3" d="m0,0 v170 m90,0 v-170 z"></path>
-                        <path fill-opacity="0" stroke="#aaaaaa" stroke-width="2" d="m0,170 C0 180 90 180 90 170"></path>
-                    </svg>
+                    <div class="spinner"></div>
+                    <p id="load-text">Loading files...</p>
                 </div>
-                <img class="titleContent" src="resources/title.png"/>
-                <p class="titleContent noForm">Tiled slideshow for reddit or your local files.</p>
-                <p class="titleContent noForm">No files are uploaded. The slideshow is run on your computer.</p>
-                <button class="titleContent browse noForm" id="browse">Pick folder</button> <button class="titleContent browse noForm" id="browseReddit">From reddit</button>
+                <h1 class="titleContent">SlideItUpNow</h1>
+                <p class="titleContent subtitle">Tiled slideshow for your content</p>
+                <div class="titleContent source-cards noForm">
+                    <button class="source-card" id="browse">
+                        <span class="card-icon">&#128193;</span>
+                        <div class="card-title">Local Files</div>
+                        <div class="card-desc">Pick a folder from your computer</div>
+                    </button>
+                    <button class="source-card" id="browseReddit">
+                        <span class="card-icon">&#128279;</span>
+                        <div class="card-title">Reddit</div>
+                        <div class="card-desc">Browse subreddit content</div>
+                    </button>
+                </div>
+                <p class="titleContent privacy-note noForm">Runs entirely in your browser. No files uploaded.</p>
                 <div id="redditForm" style="display: none;">
+                    <button class="form-back" id="redditBack">&#8592; Back</button>
+                    <h2>Reddit Browser</h2>
                     <div>
                         <label>Profile</label>
                         <select id="profilePicker">
-                            <option value="__none" selected>-</option>
-                            <option value="__create">Create New</option>
-                            <optgroup label="Presets">
-                            </optgroup>
-                            <optgroup label="Custom">
-                            </optgroup>
+                            <option value="__none" selected>Select...</option>
+                            <option value="__create">+ New Profile</option>
+                            <optgroup label="Presets"></optgroup>
+                            <optgroup label="Custom"></optgroup>
                         </select>
                     </div>
                     <div id="profileInput" style="display: none;">
-                        <label>Profile name</label>
+                        <label>Name</label>
                         <input type="text" id="profileNameInput" autocomplete="off" value="">
                     </div>
                     <div>
@@ -89,7 +151,8 @@
                         </select>
                     </div>
                     <div style="display: none;" id="redditTimeContainer">
-                        <label>Time range</label><select id="redditTime" autocomplete="off">
+                        <label>Time range</label>
+                        <select id="redditTime" autocomplete="off">
                             <option value="hour">Past hour</option>
                             <option value="day" selected>Past 24 hours</option>
                             <option value="week">Past week</option>
@@ -99,9 +162,10 @@
                         </select>
                     </div>
                     <div>
-                        <label for="subredditInput">Subreddits</label><span><input type="text" placeholder="subreddit" id="subredditInput" autocomplete="off" /><button id="subredditAdd">Add</button></span>
+                        <label>Subreddits</label>
+                        <span><input type="text" placeholder="subreddit" id="subredditInput" autocomplete="off"><button id="subredditAdd">Add</button></span>
                     </div>
-                    <div id="subredditError" style="display: none; color: #c0304a; font-size: 13px; text-align: right;"></div>
+                    <div id="subredditError" style="display: none;"></div>
                     <div>
                         <span></span><span id="pickedSubreddits"></span>
                     </div>
@@ -109,22 +173,22 @@
                         <div class="tooltip-container">
                             <label for="roundRobin" class="tooltip-target">Round Robin (?)</label>
                             <div class="tooltip">
-                                Instead of taking all subreddits and sorting them together,
-                                this option will sort each subreddit individually and then
-                                take one slide from each subreddit at a time.
+                                Instead of mixing all subreddits together,
+                                this takes one slide from each subreddit at a time.
                             </div>
                         </div>
-                        <input type="checkbox" autocomplete="off" id="roundRobin" />
+                        <input type="checkbox" autocomplete="off" id="roundRobin">
                     </div>
                     <div>
-                        <button id="redditSubmit">Show Me Porn!</button>
+                        <button id="redditSubmit">Start Slideshow</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Slideshow Grid -->
         <div id="slideshow-grid">
-            <div class="slideshow-row">
-            </div>
+            <div class="slideshow-row"></div>
         </div>
     </body>
 </html>

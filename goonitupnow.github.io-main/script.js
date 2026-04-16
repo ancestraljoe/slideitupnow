@@ -5,33 +5,18 @@ import { startReddit, nextRedditSlides, initReddit, resetReddit } from './reddit
 const DEBOUNCE_MS = 100;
 
 let inProgress = false;
-let animationInterval;
 let slidesFetcher;
 let slidesRestarter;
 let hlsSources = {};
 
-function animateBucket() {
-    let path = document.getElementById("path")
-    let time = 0.0
-    animationInterval = setInterval(() => {
-        time += 0.1
-        let height = (current/total)*140 + 30
-        let startY = 200 - height
-        let startHeight = startY + Math.sin(time)*20
-        let leftDistToBottom = 170 - startHeight
-        let endHeight = startY + Math.cos(time)*20
-        let rightDistToTop = 170 - endHeight
-        let y1 = Math.sin(time*2 + 3*Math.PI/4)*30 + startY
-        let y2 = Math.sin(time*2 + Math.PI/4)*30 + startY
-        path.setAttribute('d', 'm0,' + startHeight + ' v' + leftDistToBottom + ' C0 180 90 180 90 170 v-' + rightDistToTop + ' C60 ' + y1 + ' 30 ' + y2 + ' 0 ' + startHeight + ' z')
-    }, 33)
+function showLoader(text) {
+    const container = document.getElementById("load-container")
+    const loadText = document.getElementById("load-text")
+    if (loadText) loadText.textContent = text || "Loading..."
+    container.style.display = 'flex'
 }
 
-function stopBucket() {
-    if (animationInterval) {
-        clearInterval(animationInterval)
-        animationInterval = null
-    }
+function hideLoader() {
     document.getElementById("load-container").style.display = 'none'
 }
 
@@ -41,9 +26,7 @@ async function openDir2() {
         for (const e of document.getElementsByClassName("titleContent")) {
             e.style.display = 'none'
         }
-        document.getElementById("load-container").style.display = 'block'
-        document.getElementById("menu-tip").style.display = 'none'
-        animateBucket()
+        showLoader("Loading files...")
         await loadFiles(folder)
         inProgress = true
         slidesFetcher = nextFileSlides
@@ -51,30 +34,30 @@ async function openDir2() {
         for (const e of document.getElementsByClassName("slideshow-row")) {
             await startSlideShow(e)
         }
-        stopBucket()
+        hideLoader()
     } catch(e) {
         console.log(e)
-        stopBucket()
+        hideLoader()
     }
 }
 
 async function openReddit() {
-    document.getElementById("load-container").style.display = 'block'
-    document.getElementById("menu-tip").style.display = 'none'
-    animateBucket()
+    showLoader("Loading from Reddit...")
     if(await startReddit()) {
         for (const e of document.getElementsByClassName("titleContent")) {
             e.style.display = 'none'
         }
-        stopBucket()
+        hideLoader()
         inProgress = true
         slidesFetcher = nextRedditSlides
         for (const e of document.getElementsByClassName("slideshow-row")) {
             await startSlideShow(e)
         }
     } else {
-        stopBucket()
-        document.getElementById("menu-tip").style.display = null
+        hideLoader()
+        for (const e of document.getElementsByClassName("noForm")) {
+            e.style.display = null
+        }
     }
 }
 
@@ -123,11 +106,13 @@ function goHome() {
     resetReddit()
 
     const pauseBtn = document.getElementById("pauseAll")
-    if (pauseBtn) pauseBtn.textContent = "pause"
+    if (pauseBtn) {
+        pauseBtn.querySelector('.btn-label').textContent = "Pause"
+        pauseBtn.querySelector('.btn-icon').textContent = '\u23F8'
+    }
 
     document.getElementById("slideshow-grid").style.display = 'none'
     document.getElementById("welcome").style.display = 'flex'
-    document.getElementById("menu-tip").style.display = null
     document.getElementById("redditForm").style.display = 'none'
     for (const e of document.getElementsByClassName("titleContent")) {
         e.style.display = null
