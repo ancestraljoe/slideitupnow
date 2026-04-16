@@ -215,11 +215,26 @@ async function startSlideShow(root) {
                     }
                     nextSlide(vidDiv)
                 }, false)
-                vidDiv.onclick = () => {
-                    if (timeout) {
-                        clearTimeout(timeout)
+                let clickTimer = null
+                vidDiv.onclick = (e) => {
+                    e.preventDefault()
+                    if (clickTimer) {
+                        // Double click: skip to next video
+                        clearTimeout(clickTimer)
+                        clickTimer = null
+                        if (timeout) clearTimeout(timeout)
+                        nextSlide(vidDiv)
+                    } else {
+                        // Single click: toggle pause/play (after short delay to detect double)
+                        clickTimer = setTimeout(() => {
+                            clickTimer = null
+                            if (vidDiv.paused) {
+                                vidDiv.play()
+                            } else {
+                                vidDiv.pause()
+                            }
+                        }, 250)
                     }
-                    nextSlide(vidDiv)
                 }
             } else if (slide.format == "image") {
                 let imgDiv = document.createElement("img")
