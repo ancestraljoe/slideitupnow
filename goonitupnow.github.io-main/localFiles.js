@@ -19,7 +19,6 @@ export async function loadFiles(folder) {
     const {shortVideos, longVideos} = await loadVideoMetadata(videoFiles)
     allFiles = allFiles.concat(shortVideos)
     allFiles = allFiles.concat(longVideos)
-    console.log(allFiles)
     remainingFiles = [...allFiles]
     shuffle(remainingFiles)
 }
