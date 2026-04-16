@@ -189,13 +189,22 @@ document.addEventListener("fullscreenchange", () => {
 
 // --- Pause/Resume ---
 function togglePause() {
-    isPaused = !isPaused
-    const btn = document.getElementById("pauseAll")
-    btn.querySelector('.btn-label').textContent = isPaused ? "Resume" : "Pause"
-    btn.querySelector('.btn-icon').textContent = isPaused ? '\u25B6' : '\u23F8'
-    for (let v of document.getElementsByClassName("videoSlide")) {
-        isPaused ? v.pause() : v.play()
+    const rows = document.getElementsByClassName("slideshow-row")
+    const row = rows[focusedRowIndex]
+    if (!row) return
+    const videos = row.querySelectorAll('.videoSlide')
+    if (videos.length === 0) return
+
+    // Check if any video in this row is playing
+    const anyPlaying = Array.from(videos).some(v => !v.paused)
+
+    for (const v of videos) {
+        anyPlaying ? v.pause() : v.play()
     }
+
+    const btn = document.getElementById("pauseAll")
+    btn.querySelector('.btn-label').textContent = anyPlaying ? "Resume" : "Pause"
+    btn.querySelector('.btn-icon').textContent = anyPlaying ? '\u25B6' : '\u23F8'
 }
 
 // --- Reddit form back button ---
