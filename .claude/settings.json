@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Edit(*)",
+      "Write(*)",
+      "Bash(python3 server.py)",
+      "Bash(python3 -m http.server *)",
+      "Bash(git *)",
+      "Bash(curl *)",
+      "Bash(lsof *)",
+      "Bash(wc *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(diff *)",
+      "Bash(kill *)",
+      "Bash(gh *)",
+      "WebFetch(domain:*)",
+      "mcp__*"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~)"
+    ]
+  },
+
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Stop",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '\\n--- Session ended ---'"
+          }
+        ]
+      }
+    ]
+  },
+
+  "attribution": {
+    "commit": "Co-Authored-By: Claude <noreply@anthropic.com>",
+    "pr": "Generated with [Claude Code](https://claude.ai/claude-code)"
+  },
+
+  "includeGitInstructions": true,
+
+  "spinnerTipsOverride": {
+    "tips": [
+      "Use /compact at ~50% context",
+      "Start with plan mode for complex tasks",
+      "Use subagents to keep main context clean",
+      "Give Claude a way to verify its work",
+      "python3 server.py to test changes"
+    ],
+    "excludeDefault": false
+  }
+}

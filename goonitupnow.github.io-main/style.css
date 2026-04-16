@@ -1,0 +1,608 @@
+/* =====================================================
+   CSS Variables — Anime/Pastel Design System
+   ===================================================== */
+:root {
+    --color-pink: #ffc0cb;
+    --color-pink-dark: #e8859a;
+    --color-pink-light: #ffe4ec;
+    --color-pink-ultra-light: #fff0f5;
+    --color-accent: #ff99cc;
+    --color-text-menu: #ffe0e8;
+    --color-overlay: rgba(255, 150, 180, 0.18);
+    --color-overlay-dark: rgba(0, 0, 0, 0.4);
+    --color-dialog-bg: #fff0f5;
+    --color-dialog-border: #e8859a;
+    --color-badge-bg: #ffb6d9;
+    --color-badge-border: #e8859a;
+    --font-cursive: 'Brush Script MT', cursive;
+    --transition-fast: 150ms ease;
+    --transition-med: 300ms ease;
+    --border-radius-sm: 8px;
+    --border-radius-md: 14px;
+    --border-radius-pill: 999px;
+    --shadow-pastel: 0 4px 24px rgba(232, 133, 154, 0.25);
+    --shadow-pastel-sm: 0 2px 10px rgba(232, 133, 154, 0.2);
+}
+
+/* =====================================================
+   Base
+   ===================================================== */
+html, body {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-color: var(--color-pink);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    font-family: var(--font-cursive);
+}
+
+/* =====================================================
+   Cursor & Interactivity
+   ===================================================== */
+button, a, select,
+input[type="radio"],
+input[type="checkbox"],
+#volumeSlider {
+    cursor: pointer;
+}
+
+/* =====================================================
+   Slideshow Grid
+   ===================================================== */
+#slideshow-grid {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    display: none;
+    float: left;
+    position: absolute;
+    z-index: 1;
+    flex-direction: column;
+}
+
+.slideshow-row {
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.imgSlide {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    height: 100%;
+}
+
+.videoSlide {
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+}
+
+.iframeSlide {
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+    display: inline-flex;
+}
+
+/* =====================================================
+   Welcome Screen
+   ===================================================== */
+#welcome {
+    float: left;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+#welcomeArea {
+    text-align: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+#welcomeArea svg {
+    width: 75px;
+    margin-top: 250px;
+}
+
+/* Title fade-in */
+img.titleContent {
+    animation: fadeInDown 0.7s ease both;
+}
+
+p.titleContent {
+    animation: fadeInDown 0.9s ease both;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(180, 60, 90, 0.6), 0 0 12px rgba(255, 100, 130, 0.3);
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Ahegao corner images */
+#ahegao-left {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 480px;
+    animation: floatLeft 4s ease-in-out infinite;
+    transform-origin: bottom left;
+}
+
+#ahegao-right {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 400px;
+    animation: floatRight 4.5s ease-in-out infinite;
+    transform-origin: bottom right;
+}
+
+#load-container {
+    position: relative;
+    display: none;
+    width: 80px;
+    margin: 0 auto;
+}
+
+#load-left {
+    position: absolute;
+    width: 300px;
+    left: -190px;
+    top: -70px;
+}
+
+#load-right {
+    position: absolute;
+    width: 200px;
+    left: 45px;
+    top: 40px;
+}
+
+/* =====================================================
+   Buttons
+   ===================================================== */
+.browse {
+    padding: 9px 22px;
+    font-family: inherit;
+    font-size: 25px;
+    background: linear-gradient(135deg, var(--color-pink) 0%, var(--color-accent) 100%);
+    border: 2px solid var(--color-pink-dark);
+    border-radius: var(--border-radius-md);
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(180, 60, 90, 0.3);
+    box-shadow: var(--shadow-pastel-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+
+.browse:hover {
+    transform: scale(1.04);
+    box-shadow: var(--shadow-pastel);
+    filter: brightness(1.05);
+}
+
+.browse:active {
+    transform: scale(0.97);
+}
+
+/* =====================================================
+   Menu (top-right hover zone)
+   ===================================================== */
+#menu-hover {
+    position: absolute;
+    right: 0;
+    width: 300px;
+    height: 200px;
+    z-index: 3;
+}
+
+#menu {
+    color: var(--color-text-menu);
+    position: relative;
+    float: right;
+}
+
+#menu-tip {
+    font-size: 35px;
+}
+
+#menu-tip > div:nth-child(1) {
+    position: absolute;
+    transform: rotate(30deg);
+    top: 50px;
+    left: 50px;
+    color: #fff;
+    text-shadow: 0 1px 6px rgba(232, 133, 154, 0.5);
+}
+
+#menu-tip > div:nth-child(2) {
+    position: absolute;
+    top: 40px;
+    left: 150px;
+    transform: rotate(-20deg);
+}
+
+#menu-tip img {
+    width: 100px;
+    filter: drop-shadow(0 2px 4px rgba(232, 133, 154, 0.4));
+}
+
+#bar {
+    background: var(--color-overlay);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 192, 203, 0.35);
+    border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
+    padding: 4px 10px 6px 10px;
+    z-index: 2;
+    animation: slideInMenu var(--transition-med) ease;
+}
+
+#bar a {
+    transition: color var(--transition-fast), text-shadow var(--transition-fast);
+}
+
+#bar a:hover {
+    color: #fff;
+    text-shadow: 0 0 8px rgba(255, 150, 180, 0.8);
+}
+
+#volumeControl {
+    width: 40px;
+    height: 150px;
+    background: var(--color-overlay);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 192, 203, 0.35);
+    border-radius: var(--border-radius-sm) 0 0 var(--border-radius-sm);
+    float: right;
+    position: relative;
+    z-index: 2;
+}
+
+a {
+    color: var(--color-text-menu);
+    text-decoration: none;
+}
+
+/* =====================================================
+   Settings Dialog
+   ===================================================== */
+#settingsDialog {
+    width: 500px;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--color-dialog-bg);
+    border: 2px solid var(--color-dialog-border);
+    border-radius: var(--border-radius-md);
+    padding: 24px;
+    z-index: 3;
+    display: none;
+    box-shadow: var(--shadow-pastel), 0 0 0 4px rgba(255, 192, 203, 0.15);
+}
+
+#settingsDialog h3 {
+    color: var(--color-pink-dark);
+    margin: 10px 0 8px;
+    font-size: 20px;
+    letter-spacing: 0.5px;
+}
+
+#settingsClose {
+    float: right;
+    z-index: 4;
+    position: relative;
+    top: -10px;
+}
+
+#settingsClose a {
+    color: var(--color-pink-dark);
+    font-size: 18px;
+    transition: color var(--transition-fast), transform var(--transition-fast);
+    display: inline-block;
+}
+
+#settingsClose a:hover {
+    color: #c0304a;
+    transform: scale(1.2);
+}
+
+.settingsRow {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 7px;
+}
+
+.settingsRow input[type="text"],
+.settingsRow input[type="number"] {
+    border: 1.5px solid var(--color-dialog-border);
+    border-radius: var(--border-radius-sm);
+    padding: 3px 7px;
+    background: #fff;
+    font-family: var(--font-cursive);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    outline: none;
+}
+
+.settingsRow input[type="text"]:focus,
+.settingsRow input[type="number"]:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(255, 153, 204, 0.25);
+}
+
+#settingsApply {
+    margin-top: 12px;
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, var(--color-pink) 0%, var(--color-accent) 100%);
+    border: 2px solid var(--color-pink-dark);
+    border-radius: var(--border-radius-md);
+    color: #fff;
+    font-family: var(--font-cursive);
+    font-size: 18px;
+    text-shadow: 0 1px 3px rgba(180, 60, 90, 0.3);
+    box-shadow: var(--shadow-pastel-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+
+#settingsApply:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-pastel);
+    filter: brightness(1.05);
+}
+
+#settingsApply:active {
+    transform: scale(0.97);
+}
+
+#clearBackgroundImage {
+    border: 1.5px solid var(--color-dialog-border);
+    border-radius: var(--border-radius-sm);
+    background: var(--color-pink-ultra-light);
+    padding: 3px 10px;
+    font-family: var(--font-cursive);
+    color: var(--color-pink-dark);
+    transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+#clearBackgroundImage:hover {
+    background: var(--color-pink-light);
+    transform: scale(1.03);
+}
+
+.settingsRow.sub {
+    margin-left: 20px;
+    display: block;
+}
+
+.settingsRow.sub span:first-of-type {
+    width: 50px;
+    display: inline-block;
+}
+
+/* =====================================================
+   Reddit Form
+   ===================================================== */
+#redditForm {
+    width: 300px;
+    margin: 0 auto;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(180, 60, 90, 0.5);
+}
+
+#redditForm label {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(150, 40, 70, 0.7);
+    letter-spacing: 0.5px;
+}
+
+#redditForm > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#redditForm input[type="text"],
+#redditForm select {
+    border: 1.5px solid var(--color-dialog-border);
+    border-radius: var(--border-radius-sm);
+    padding: 4px 8px;
+    background: rgba(255,255,255,0.85);
+    font-family: var(--font-cursive);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    outline: none;
+}
+
+#redditForm input[type="text"]:focus,
+#redditForm select:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(255, 153, 204, 0.25);
+}
+
+#subredditAdd {
+    border: 1.5px solid var(--color-dialog-border);
+    border-radius: var(--border-radius-sm);
+    background: var(--color-pink-light);
+    padding: 4px 10px;
+    font-family: var(--font-cursive);
+    color: var(--color-pink-dark);
+    transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+#subredditAdd:hover {
+    background: var(--color-badge-bg);
+    transform: scale(1.04);
+}
+
+#pickedSubreddits {
+    text-align: right;
+}
+
+/* Subreddit badge pills */
+#pickedSubreddits .pickedSubreddit {
+    display: inline-block;
+    background: var(--color-badge-bg);
+    border: 1px solid var(--color-badge-border);
+    border-radius: var(--border-radius-pill);
+    padding: 2px 10px;
+    font-size: 14px;
+    color: #7a2040;
+    margin: 2px 2px;
+}
+
+#pickedSubreddits button {
+    border: none;
+    background: none;
+    color: var(--color-pink-dark);
+    font-size: 12px;
+    padding: 0 3px;
+    transition: color var(--transition-fast);
+}
+
+#pickedSubreddits button:hover {
+    color: #c0304a;
+}
+
+#redditSubmit {
+    padding: 10px;
+    font-family: inherit;
+    font-size: 25px;
+    width: 100%;
+    background: linear-gradient(135deg, var(--color-pink) 0%, var(--color-accent) 100%);
+    border: 2px solid var(--color-pink-dark);
+    border-radius: var(--border-radius-md);
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(180, 60, 90, 0.3);
+    box-shadow: var(--shadow-pastel-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+
+#redditSubmit:hover {
+    transform: scale(1.03);
+    box-shadow: var(--shadow-pastel);
+    filter: brightness(1.05);
+}
+
+#redditSubmit:active {
+    transform: scale(0.97);
+}
+
+/* =====================================================
+   Keyframe Animations
+   ===================================================== */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatLeft {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%       { transform: translateY(-10px) rotate(1deg); }
+}
+
+@keyframes floatRight {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%       { transform: translateY(-8px) rotate(-1deg); }
+}
+
+@keyframes slideInMenu {
+    from { opacity: 0; transform: translateX(10px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* =====================================================
+   Responsive — Portrait Mobile
+   ===================================================== */
+@media (orientation: portrait) and (max-width: 1000px) {
+    .browse, #redditSubmit {
+        font-size: 80px;
+    }
+    #settingsDialog {
+        width: 90%;
+    }
+    input, button, body, select {
+        font-size: 40px;
+    }
+
+    .settingsRow.sub span:first-of-type {
+        width: 150px;
+    }
+
+    .settingsRow input[type="text"], .settingsRow input[type="number"] {
+        width: 250px;
+    }
+
+    .settingsRow input[type="radio"] {
+        width: 30px;
+        height: 30px;
+    }
+
+    img.titleContent {
+        width: 100%;
+    }
+
+    #redditForm {
+        width: 90%;
+    }
+    #menu-hover {
+        width: 600px;
+    }
+    #volumeControl {
+        scale: 2;
+        transform-origin: top right;
+    }
+
+    #menu-tip > div:nth-child(1) {
+        top: 100px;
+        left: 235px;
+    }
+
+    #menu-tip > div:nth-child(2) {
+        top: 94px;
+        left: 370px;
+    }
+
+    #menu-tip {
+        font-size: 55px;
+    }
+
+    #menu-tip img {
+        width: 160px;
+    }
+}
+
+/* =====================================================
+   Responsive — Landscape compact
+   ===================================================== */
+@media (orientation: landscape) and (max-height: 600px) {
+
+    #ahegao-left {
+        width: 240px;
+    }
+
+    #ahegao-right {
+        width: 200px;
+    }
+}
