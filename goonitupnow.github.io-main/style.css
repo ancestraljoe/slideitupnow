@@ -272,6 +272,40 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   margin-top: 16px;
 }
 
+/* Keyboard shortcuts grid */
+.shortcuts-grid {
+  padding: 8px 14px !important;
+}
+
+.shortcut-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--border);
+}
+
+kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--font-main);
+  font-size: 12px;
+  color: var(--text-primary);
+  box-shadow: 0 1px 0 var(--border);
+}
+
 .btn-danger {
   color: var(--danger) !important;
   border-color: var(--danger) !important;
