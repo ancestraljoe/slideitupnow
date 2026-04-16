@@ -1,7 +1,7 @@
 let defaultSettings = {
     imageInterval: 20,
     rows: 2,
-    volume: 1.0,
+    volume: 0,
     videoSplittingTime: 60,
     bgColor: "0a0a0b"
 }
