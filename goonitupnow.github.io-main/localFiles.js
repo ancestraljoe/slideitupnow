@@ -1,6 +1,6 @@
 import { showDirectoryPicker } from 'https://cdn.jsdelivr.net/npm/file-system-access/lib/es2018.js';
 import { settings } from './settings.js';
-import { shuffle } from './utils.js';
+import { shuffle, scaleWidth, IMAGE_REGEX, VIDEO_REGEX } from './utils.js';
 
 let allFiles = [];
 let remainingFiles = [];
@@ -77,6 +77,7 @@ async function loadDroppedVideoMetadata(videoFiles) {
             }
         }
         video.onerror = function() {
+            URL.revokeObjectURL(video.src)
             files.pop()
             if (files.length > 0) {
                 video.src = URL.createObjectURL(files[files.length - 1])
@@ -126,9 +127,9 @@ async function loadFolder(folder, videoFiles) {
     for await (const file of files) {
         if (file.kind == 'directory') {
             await loadFolder(file, videoFiles)
-        } else if (/\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i.test(file.name)) {
+        } else if (IMAGE_REGEX.test(file.name)) {
             allFiles.push({type: 'short', file: file, format: 'image'})
-        } else if (/\.(mp4|webm|ogg|mov|avi|mkv|flv|wmv|3gp)$/i.test(file.name)) {
+        } else if (VIDEO_REGEX.test(file.name)) {
             videoFiles.push(file)
         }
     }
@@ -173,7 +174,7 @@ async function loadVideoMetadata(videoFiles) {
         }
 
         video.onerror = async function(e) {
-            console.error("Failed to load video, skipping", e);
+            URL.revokeObjectURL(video.src)
             videoFiles.pop();
             if (videoFiles.length > 0) {
                 video.src = URL.createObjectURL(await videoFiles[videoFiles.length - 1].getFile())
@@ -243,7 +244,4 @@ async function loadImageMetadata() {
 }
 
 
-function scaleWidth(fitHeight, height, width) {
-    let scaleFactor = fitHeight/height
-    return width * scaleFactor
-}
+// scaleWidth imported from utils.js

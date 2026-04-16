@@ -1,5 +1,4 @@
-const IMAGE_REGEX = /\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i
-const VIDEO_REGEX = /\.(mp4|webm|ogg|mov|avi|mkv|flv|wmv|3gp)$/i
+import { IMAGE_REGEX, VIDEO_REGEX } from './utils.js'
 
 let onFilesCallback = null
 

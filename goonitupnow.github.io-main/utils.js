@@ -8,3 +8,12 @@ export function shuffle(array) {
     }
     return array;
 }
+
+// Shared file type regex
+export const IMAGE_REGEX = /\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i
+export const VIDEO_REGEX = /\.(mp4|webm|ogg|mov|avi|mkv|flv|wmv|3gp)$/i
+
+// Scale width to fit a target height while preserving aspect ratio
+export function scaleWidth(fitHeight, height, width) {
+    return width * (fitHeight / height)
+}

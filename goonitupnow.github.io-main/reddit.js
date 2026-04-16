@@ -1,5 +1,5 @@
 import { redditPresets } from './reddit_presets.js'
-import { shuffle } from './utils.js'
+import { shuffle, scaleWidth } from './utils.js'
 
 let redditSlideGroups = [];
 let baseUrl = "https://old.reddit.com/r/";
@@ -54,6 +54,7 @@ async function loadNextPage(slideDefinition) {
     let url = baseUrl + slideDefinition.subreddits + urlSuffix + (slideDefinition.after ? "&after=" + slideDefinition.after : "")
     try {
         const response = await fetch(url)
+        if (!response.ok) throw new Error('Reddit returned ' + response.status)
         const jsonResp = await response.json()
         let metadataPromises = []
         slideDefinition.after = jsonResp.data.after
@@ -123,10 +124,7 @@ function loadImageMetadata(imgObj) {
     return Promise.race([load, timeout])
 }
 
-function scaleWidth(fitHeight, height, width) {
-    let scaleFactor = fitHeight/height
-    return width * scaleFactor
-}
+// scaleWidth imported from utils.js
 
 export async function nextRedditSlides(remainingWidth, height, isEmpty) {
     if (redditSlideGroups.length === 0) return []
