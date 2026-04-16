@@ -177,11 +177,11 @@ async function startSlideShow(root) {
                 let vidDiv = document.createElement("video")
                 vidDiv.className = "videoSlide"
                 vidDiv.setAttribute("controls", "true")
-                vidDiv.volume = settings.volume
-                vidDiv.muted = settings.volume === 0
+                vidDiv.muted = true
                 if (slide.file) {
                     vidDiv.src = URL.createObjectURL(await slide.file.getFile())
                     vidDiv.setAttribute("data-is-object", "true")
+                    vidDiv.currentTime = 0
                     vidDiv.play()
                 } else if (slide.url) {
                     vidDiv.src = slide.url
