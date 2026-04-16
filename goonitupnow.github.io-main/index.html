@@ -23,6 +23,8 @@
             <div class="toolbar-sep"></div>
             <button class="toolbar-btn" id="fullscreen"><span class="btn-icon">&#9974;</span><span class="btn-label">Fullscreen</span></button>
             <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" id="savePlaylist"><span class="btn-icon">&#128190;</span><span class="btn-label">Save</span></button>
+            <div class="toolbar-sep"></div>
             <button class="toolbar-btn" id="backHome"><span class="btn-icon">&#8962;</span><span class="btn-label">Home</span></button>
             <div class="toolbar-sep"></div>
             <button class="toolbar-btn" id="themeToggle"><span class="btn-icon">&#9789;</span><span class="btn-label">Theme</span></button>
@@ -90,6 +92,30 @@
                         </div>
                     </div>
 
+                    <!-- Playlists -->
+                    <div class="settings-section">
+                        <p class="settings-section-title">Playlists</p>
+                        <div class="settings-group" id="playlistsSettingsGroup"></div>
+                    </div>
+
+                    <!-- Keyboard Shortcuts -->
+                    <div class="settings-section">
+                        <p class="settings-section-title">Keyboard Shortcuts</p>
+                        <div class="settings-group shortcuts-grid">
+                            <div class="shortcut-row"><kbd>Space</kbd><span>Pause / Resume</span></div>
+                            <div class="shortcut-row"><kbd>F</kbd><span>Fullscreen</span></div>
+                            <div class="shortcut-row"><kbd>S</kbd><span>Open / Close Settings</span></div>
+                            <div class="shortcut-row"><kbd>T</kbd><span>Toggle Theme</span></div>
+                            <div class="shortcut-row"><kbd>H</kbd><span>Go Home</span></div>
+                            <div class="shortcut-row"><kbd>Esc</kbd><span>Close Settings</span></div>
+                            <div class="shortcut-row"><kbd>&uarr;</kbd> <kbd>&darr;</kbd><span>Focus Row</span></div>
+                            <div class="shortcut-row"><kbd>&larr;</kbd> <kbd>&rarr;</kbd><span>Skip Slide</span></div>
+                            <div class="shortcut-row"><kbd>1</kbd> - <kbd>9</kbd><span>Jump to Row</span></div>
+                            <div class="shortcut-row"><kbd>+</kbd><span>Add Row</span></div>
+                            <div class="shortcut-row"><kbd>-</kbd><span>Remove Row</span></div>
+                        </div>
+                    </div>
+
                     <!-- Theme -->
                     <div class="settings-section">
                         <p class="settings-section-title">Theme</p>
@@ -108,6 +134,7 @@
         <div id="welcome">
             <img id="ahegao-left" src="resources/ahegao left.png" alt="">
             <img id="ahegao-right" src="resources/ahegao right.png" alt="">
+            <div id="drop-overlay"><div class="drop-content">&#128230; Drop files or folders here</div></div>
             <div id="welcomeArea">
                 <div id="load-container">
                     <div class="spinner"></div>
@@ -126,8 +153,15 @@
                         <div class="card-title">Reddit</div>
                         <div class="card-desc">Browse subreddit content</div>
                     </button>
+                    <button class="source-card" id="browseFavorites">
+                        <span class="card-icon">&#9829;</span>
+                        <div class="card-title">Favorites <span id="fav-count" class="fav-badge"></span></div>
+                        <div class="card-desc">View your saved slides</div>
+                    </button>
                 </div>
                 <p class="titleContent privacy-note noForm">Runs entirely in your browser. No files uploaded.</p>
+                <p class="titleContent privacy-note noForm">You can also drag &amp; drop a folder here to start instantly.</p>
+                <div id="playlistsSection" class="titleContent noForm"></div>
                 <div id="redditForm" style="display: none;">
                     <button class="form-back" id="redditBack">&#8592; Back</button>
                     <h2>Reddit Browser</h2>

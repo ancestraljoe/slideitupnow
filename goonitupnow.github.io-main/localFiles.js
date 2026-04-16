@@ -23,6 +23,72 @@ export async function loadFiles(folder) {
     shuffle(remainingFiles)
 }
 
+export async function loadDroppedFiles(droppedItems) {
+    remainingFiles = []
+    allFiles = []
+    const imageItems = droppedItems.filter(f => f.format === 'image')
+    const videoItems = droppedItems.filter(f => f.format === 'video')
+
+    // Images: wrap droppedFile as a fake FileSystemHandle-like object
+    for (const item of imageItems) {
+        allFiles.push({ type: 'short', droppedFile: item.droppedFile, format: 'image' })
+    }
+
+    // Videos: load metadata using File objects directly
+    if (videoItems.length > 0) {
+        const videoFiles = videoItems.map(v => v.droppedFile)
+        const { shortVideos, longVideos } = await loadDroppedVideoMetadata(videoFiles)
+        allFiles = allFiles.concat(shortVideos)
+        allFiles = allFiles.concat(longVideos)
+    }
+
+    remainingFiles = [...allFiles]
+    shuffle(remainingFiles)
+}
+
+async function loadDroppedVideoMetadata(videoFiles) {
+    const longVideos = []
+    const shortVideos = []
+    const video = document.createElement('video')
+    video.preload = 'metadata'
+    const files = [...videoFiles]
+    total = files.length
+    current = 0
+
+    return new Promise((resolve) => {
+        video.onloadedmetadata = function() {
+            URL.revokeObjectURL(video.src)
+            const duration = video.duration
+            const width = video.videoWidth || 19
+            const height = video.videoHeight || 9
+            const file = files.pop()
+            if (duration > settings.videoSplittingTime) {
+                for (let i = 0; i < Math.ceil(duration / settings.videoSplittingTime); i++) {
+                    longVideos.push({ type: 'long', droppedFile: file, start: i * settings.videoSplittingTime, format: 'video', width, height })
+                }
+            } else {
+                shortVideos.push({ type: 'short', droppedFile: file, format: 'video', width, height })
+            }
+            if (files.length > 0) {
+                video.src = URL.createObjectURL(files[files.length - 1])
+                current++
+            } else {
+                resolve({ shortVideos, longVideos })
+            }
+        }
+        video.onerror = function() {
+            files.pop()
+            if (files.length > 0) {
+                video.src = URL.createObjectURL(files[files.length - 1])
+                current++
+            } else {
+                resolve({ shortVideos, longVideos })
+            }
+        }
+        video.src = URL.createObjectURL(files[files.length - 1])
+    })
+}
+
 export function resetFiles() {
     allFiles = []
     remainingFiles = []
@@ -121,6 +187,11 @@ async function loadVideoMetadata(videoFiles) {
     })
 }
 
+async function getFileBlob(item) {
+    if (item.droppedFile) return item.droppedFile
+    return await item.file.getFile()
+}
+
 async function loadImageMetadata() {
     let img = new Image();
     let imageObjectsToLoad = []
@@ -141,7 +212,7 @@ async function loadImageMetadata() {
                 URL.revokeObjectURL(img.src);
                 if (imageObjectsToLoad.length > 0) {
                     currentImageObject = imageObjectsToLoad.pop()
-                    img.src = URL.createObjectURL(await currentImageObject.file.getFile())
+                    img.src = URL.createObjectURL(await getFileBlob(currentImageObject))
                 } else {
                     resolve()
                 }
@@ -150,14 +221,14 @@ async function loadImageMetadata() {
                 console.error(e, attempts)
                 URL.revokeObjectURL(img.src)
                 if (attempts++ < 3) {
-                    img.src = URL.createObjectURL(await currentImageObject.file.getFile())
+                    img.src = URL.createObjectURL(await getFileBlob(currentImageObject))
                 } else {
                     attempts = 0
                     currentImageObject.width = 1
                     currentImageObject.height = 1
                     if (imageObjectsToLoad.length > 0) {
                         currentImageObject = imageObjectsToLoad.pop()
-                        img.src = URL.createObjectURL(await currentImageObject.file.getFile())
+                        img.src = URL.createObjectURL(await getFileBlob(currentImageObject))
                     } else {
                         resolve()
                     }
@@ -165,7 +236,7 @@ async function loadImageMetadata() {
             }
 
             currentImageObject = imageObjectsToLoad.pop()
-            img.src = URL.createObjectURL(await currentImageObject.file.getFile());
+            img.src = URL.createObjectURL(await getFileBlob(currentImageObject));
         })
 
     }

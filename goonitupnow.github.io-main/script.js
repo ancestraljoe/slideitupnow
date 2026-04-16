@@ -1,10 +1,14 @@
 import { initSettings, settings, setIsPaused } from './settings.js';
-import { showPicker, loadFiles, nextFileSlides, current, total, restartSlides, resetFiles } from './localFiles.js';
+import { showPicker, loadFiles, loadDroppedFiles, nextFileSlides, current, total, restartSlides, resetFiles } from './localFiles.js';
+import { initDragDrop } from './dragdrop.js';
+import { initFavorites, wrapSlide, startFavSlides, nextFavSlides, restartFavSlides } from './favorites.js';
+import { renderPlaylistChips, renderPlaylistSettings, promptSavePlaylist } from './playlists.js';
 import { startReddit, nextRedditSlides, initReddit, resetReddit } from './reddit.js';
 
 const DEBOUNCE_MS = 100;
 
 let inProgress = false;
+let currentSourceConfig = null;
 let slidesFetcher;
 let slidesRestarter;
 let hlsSources = {};
@@ -29,6 +33,7 @@ async function openDir2() {
         showLoader("Loading files...")
         await loadFiles(folder)
         inProgress = true
+        currentSourceConfig = { type: 'local', folderName: folder.name || 'Local' }
         slidesFetcher = nextFileSlides
         slidesRestarter = restartSlides
         for (const e of document.getElementsByClassName("slideshow-row")) {
@@ -49,6 +54,13 @@ async function openReddit() {
         }
         hideLoader()
         inProgress = true
+        currentSourceConfig = {
+            type: 'reddit',
+            subreddits: Array.from(document.getElementsByClassName("pickedSubreddit")).map(e => e.innerText.trim()),
+            sort: document.getElementById("redditSort").value,
+            time: document.getElementById("redditTime").value,
+            roundRobin: document.getElementById("roundRobin").checked
+        }
         slidesFetcher = nextRedditSlides
         for (const e of document.getElementsByClassName("slideshow-row")) {
             await startSlideShow(e)
@@ -67,14 +79,17 @@ function jitter(num) {
 }
 
 function disposeResources(elem) {
-    if (elem.dataset.isObject) {
-        URL.revokeObjectURL(elem.src)
-    } else if (elem.dataset.hlsSrc) {
-        let hlsObj = hlsSources[elem.dataset.hlsSrc];
+    // Handle wrapped slides
+    const media = elem.classList?.contains('slide-wrapper') ? elem.querySelector('video, img') : elem
+    if (!media) return
+    if (media.dataset?.isObject) {
+        URL.revokeObjectURL(media.src)
+    } else if (media.dataset?.hlsSrc) {
+        let hlsObj = hlsSources[media.dataset.hlsSrc];
         if (hlsObj) {
             hlsObj.detachMedia()
             hlsObj.destroy()
-            delete hlsSources[elem.dataset.hlsSrc]
+            delete hlsSources[media.dataset.hlsSrc]
         }
     }
 }
@@ -99,6 +114,7 @@ function goHome() {
     if (!inProgress) return
     disposeAllResources()
     inProgress = false
+    currentSourceConfig = null
     setIsPaused(false)
     slidesFetcher = null
     slidesRestarter = null
@@ -120,6 +136,7 @@ function goHome() {
     for (const e of document.getElementsByClassName("noForm")) {
         e.style.display = null
     }
+    refreshPlaylists()
 }
 
 function replaceSlide(parent, newElem, oldElem, newWidth){
@@ -178,7 +195,12 @@ async function startSlideShow(root) {
                 vidDiv.className = "videoSlide"
                 vidDiv.setAttribute("controls", "true")
                 vidDiv.muted = true
-                if (slide.file) {
+                if (slide.droppedFile) {
+                    vidDiv.src = URL.createObjectURL(slide.droppedFile)
+                    vidDiv.setAttribute("data-is-object", "true")
+                    vidDiv.currentTime = 0
+                    vidDiv.play()
+                } else if (slide.file) {
                     vidDiv.src = URL.createObjectURL(await slide.file.getFile())
                     vidDiv.setAttribute("data-is-object", "true")
                     vidDiv.currentTime = 0
@@ -196,24 +218,32 @@ async function startSlideShow(root) {
                     hls.on(Hls.Events.MANIFEST_PARSED, function() {
                         vidDiv.play();
                     });
-                    hls.on(Hls.Events.ERROR, () => {
+                }
+                const slideInfo = { url: slide.url || slide.hls, name: slide.name || slide.droppedFile?.name, format: 'video', source: slide.url ? 'reddit' : 'local', width: slide.width, height: slide.height }
+                const wrappedVid = wrapSlide(vidDiv, slideInfo)
+                if (slide.hls) {
+                    hlsSources[slide.hls].on(Hls.Events.ERROR, () => {
                         if (timeout) {
                             clearTimeout(timeout)
                         }
-                        nextSlide(vidDiv)
+                        nextSlide(wrappedVid)
                     })
                 }
-                replaceSlide(root, vidDiv, toRemove.pop(), slide.scaledWidth)
+                wrappedVid._skipSlide = () => {
+                    if (timeout) clearTimeout(timeout)
+                    nextSlide(wrappedVid)
+                }
+                replaceSlide(root, wrappedVid, toRemove.pop(), slide.scaledWidth)
                 let timeout;
                 if (slide.type === 'long') {
                     vidDiv.currentTime = slide.start
-                    timeout = setTimeout(() => nextSlide(vidDiv), settings.videoSplittingTime*1000)
+                    timeout = setTimeout(() => nextSlide(wrappedVid), settings.videoSplittingTime*1000)
                 }
                 vidDiv.addEventListener("ended", () => {
                     if (timeout) {
                         clearTimeout(timeout)
                     }
-                    nextSlide(vidDiv)
+                    nextSlide(wrappedVid)
                 }, false)
                 let clickTimer = null
                 vidDiv.onclick = (e) => {
@@ -223,7 +253,7 @@ async function startSlideShow(root) {
                         clearTimeout(clickTimer)
                         clickTimer = null
                         if (timeout) clearTimeout(timeout)
-                        nextSlide(vidDiv)
+                        nextSlide(wrappedVid)
                     } else {
                         // Single click: toggle pause/play (after short delay to detect double)
                         clickTimer = setTimeout(() => {
@@ -239,17 +269,26 @@ async function startSlideShow(root) {
             } else if (slide.format == "image") {
                 let imgDiv = document.createElement("img")
                 imgDiv.className = "imgSlide"
-                if (slide.file) {
+                if (slide.droppedFile) {
+                    imgDiv.src = URL.createObjectURL(slide.droppedFile)
+                    imgDiv.setAttribute("data-is-object", "true")
+                } else if (slide.file) {
                     imgDiv.src = URL.createObjectURL(await slide.file.getFile())
                     imgDiv.setAttribute("data-is-object", "true")
                 } else if (slide.url) {
                     imgDiv.src = slide.url
                 }
-                replaceSlide(root, imgDiv, toRemove.pop(), slide.scaledWidth)
-                const timeout = setTimeout(() => nextSlide(imgDiv), jitter(settings.imageInterval*1000))
+                const imgSlideInfo = { url: slide.url, name: slide.name || slide.droppedFile?.name, format: 'image', source: slide.url ? 'reddit' : 'local', width: slide.width, height: slide.height }
+                const wrappedImg = wrapSlide(imgDiv, imgSlideInfo)
+                wrappedImg._skipSlide = () => {
+                    clearTimeout(timeout)
+                    nextSlide(wrappedImg)
+                }
+                replaceSlide(root, wrappedImg, toRemove.pop(), slide.scaledWidth)
+                const timeout = setTimeout(() => nextSlide(wrappedImg), jitter(settings.imageInterval*1000))
                 imgDiv.onclick = () => {
                     clearTimeout(timeout)
-                    nextSlide(imgDiv)
+                    nextSlide(wrappedImg)
                 }
             } else if (slide.format == "iframe") {
                 let iframeDiv = parseIframe(slide.html)
@@ -319,6 +358,64 @@ async function changeGrid() {
     }
 }
 
+async function openFavorites() {
+    startFavSlides()
+    for (const e of document.getElementsByClassName("titleContent")) {
+        e.style.display = 'none'
+    }
+    inProgress = true
+    slidesFetcher = nextFavSlides
+    slidesRestarter = restartFavSlides
+    for (const e of document.getElementsByClassName("slideshow-row")) {
+        await startSlideShow(e)
+    }
+}
+
+async function openDropped(droppedItems) {
+    try {
+        for (const e of document.getElementsByClassName("titleContent")) {
+            e.style.display = 'none'
+        }
+        showLoader("Loading dropped files...")
+        await loadDroppedFiles(droppedItems)
+        inProgress = true
+        slidesFetcher = nextFileSlides
+        slidesRestarter = restartSlides
+        for (const e of document.getElementsByClassName("slideshow-row")) {
+            await startSlideShow(e)
+        }
+        hideLoader()
+    } catch(e) {
+        console.log(e)
+        hideLoader()
+    }
+}
+
+function refreshPlaylists() {
+    const container = document.getElementById('playlistsSection')
+    if (container) renderPlaylistChips(container, onPlaylistClick)
+}
+
+async function onPlaylistClick(playlist) {
+    if (playlist.type === 'reddit') {
+        // Fill the reddit form and submit
+        const pickedSubreddits = document.getElementById("pickedSubreddits")
+        pickedSubreddits.textContent = ''
+        for (const sub of playlist.subreddits) {
+            const divElem = document.createElement("div")
+            const spanElem = document.createElement("span")
+            spanElem.className = "pickedSubreddit"
+            spanElem.textContent = sub
+            divElem.appendChild(spanElem)
+            pickedSubreddits.appendChild(divElem)
+        }
+        document.getElementById("redditSort").value = playlist.sort || 'hot'
+        document.getElementById("redditTime").value = playlist.time || 'day'
+        document.getElementById("roundRobin").checked = !!playlist.roundRobin
+        await openReddit()
+    }
+}
+
 function showRedditForm() {
     for(let elem of document.getElementsByClassName("noForm")) {
         elem.style.display = 'none'
@@ -333,4 +430,15 @@ window.onload = () => {
     document.getElementById("redditSubmit").onclick = openReddit
     initSettings(changeGrid, goHome)
     initReddit()
+    initDragDrop(openDropped)
+    initFavorites()
+    const favCard = document.getElementById('browseFavorites')
+    if (favCard) favCard.onclick = openFavorites
+
+    // Playlists
+    refreshPlaylists()
+    renderPlaylistSettings(document.getElementById('playlistsSettingsGroup'))
+    document.getElementById('savePlaylist').onclick = () => {
+        if (currentSourceConfig) promptSavePlaylist(currentSourceConfig)
+    }
 }
