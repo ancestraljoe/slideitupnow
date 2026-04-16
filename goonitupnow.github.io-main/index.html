@@ -23,6 +23,9 @@
             <div class="toolbar-sep"></div>
             <button class="toolbar-btn" id="fullscreen"><span class="btn-icon">&#9974;</span><span class="btn-label">Fullscreen</span></button>
             <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" id="edgeBtn"><span class="btn-icon">&#9889;</span><span class="btn-label">Edge</span></button>
+            <div class="toolbar-sep"></div>
+            <span class="toolbar-timer" id="toolbarTimer"></span>
             <button class="toolbar-btn" id="savePlaylist"><span class="btn-icon">&#128190;</span><span class="btn-label">Save</span></button>
             <div class="toolbar-sep"></div>
             <button class="toolbar-btn" id="backHome"><span class="btn-icon">&#8962;</span><span class="btn-label">Home</span></button>
@@ -107,6 +110,7 @@
                             <div class="shortcut-row"><kbd>S</kbd><span>Open / Close Settings</span></div>
                             <div class="shortcut-row"><kbd>T</kbd><span>Toggle Theme</span></div>
                             <div class="shortcut-row"><kbd>H</kbd><span>Go Home</span></div>
+                            <div class="shortcut-row"><kbd>E</kbd><span>Edge Pause</span></div>
                             <div class="shortcut-row"><kbd>Esc</kbd><span>Close Settings</span></div>
                             <div class="shortcut-row"><kbd>&uarr;</kbd> <kbd>&darr;</kbd><span>Focus Row</span></div>
                             <div class="shortcut-row"><kbd>&larr;</kbd> <kbd>&rarr;</kbd><span>Skip Slide</span></div>
@@ -158,6 +162,14 @@
                         <div class="card-title">Favorites <span id="fav-count" class="fav-badge"></span></div>
                         <div class="card-desc">View your saved slides</div>
                     </button>
+                </div>
+                <div class="titleContent timer-picker noForm">
+                    <span class="timer-picker-label">Session timer:</span>
+                    <button class="timer-btn" data-minutes="15">15m</button>
+                    <button class="timer-btn" data-minutes="30">30m</button>
+                    <button class="timer-btn" data-minutes="45">45m</button>
+                    <button class="timer-btn" data-minutes="60">60m</button>
+                    <button class="timer-btn active" data-minutes="0">Off</button>
                 </div>
                 <p class="titleContent privacy-note noForm">Runs entirely in your browser. No files uploaded.</p>
                 <p class="titleContent privacy-note noForm">You can also drag &amp; drop a folder here to start instantly.</p>
@@ -219,6 +231,30 @@
                     <div>
                         <button id="redditSubmit">Show Me Porn!</button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edge Overlay -->
+        <div id="edge-overlay">
+            <div class="edge-content">
+                <div class="edge-text">Edge...</div>
+                <div class="edge-timer" id="edgeTimer">0:00</div>
+                <div class="edge-hint">Press E or click to resume</div>
+            </div>
+        </div>
+
+        <!-- Goon Timer Progress Bar -->
+        <div id="goon-timer-bar"></div>
+
+        <!-- Goon Timer End Overlay -->
+        <div id="timer-end-overlay">
+            <div class="timer-end-content">
+                <div class="timer-end-text">Time's up</div>
+                <div class="timer-end-buttons">
+                    <button class="timer-end-btn" id="timerEdgeMore">Edge more (+10 min)</button>
+                    <button class="timer-end-btn" id="timerKeepGoing">Keep going</button>
+                    <button class="timer-end-btn timer-end-finish" id="timerFinish">Finish</button>
                 </div>
             </div>
         </div>

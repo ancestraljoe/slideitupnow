@@ -252,6 +252,8 @@ export function resetRowFocus() {
     focusedRowIndex = 0
 }
 
+let onEdgeToggle = null
+
 // --- Keyboard shortcuts ---
 function initKeyboard(onGoHome) {
     document.addEventListener("keydown", (e) => {
@@ -286,6 +288,11 @@ function initKeyboard(onGoHome) {
                 e.preventDefault()
                 const overlay = document.getElementById("settingsOverlay")
                 overlay.classList.contains("open") ? closeSettings() : openSettings()
+                break
+            case "e":
+            case "E":
+                e.preventDefault()
+                if (onEdgeToggle) onEdgeToggle()
                 break
             case "ArrowRight":
                 e.preventDefault()
@@ -331,7 +338,8 @@ function initKeyboard(onGoHome) {
     })
 }
 
-export function initSettings(onGridChanged, onGoHome) {
+export function initSettings(onGridChanged, onGoHome, onToggleEdge) {
+    onEdgeToggle = onToggleEdge
     gridChanged = onGridChanged
 
     // Theme
