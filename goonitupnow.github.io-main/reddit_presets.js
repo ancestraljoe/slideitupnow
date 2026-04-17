@@ -7,6 +7,7 @@ export const redditPresets = [
         time: "day",
         roundRobin: true,
         isPreset: true,
+        intensity: 2,
     },
     {
         name: "Hentai",
@@ -15,6 +16,7 @@ export const redditPresets = [
         time: "day",
         roundRobin: true,
         isPreset: true,
+        intensity: 3,
     },
     {
         name: "Fem Cock",
@@ -23,6 +25,7 @@ export const redditPresets = [
         time: "day",
         roundRobin: true,
         isPreset: true,
+        intensity: 3,
     },
     {
         name: "GOON",
@@ -31,6 +34,7 @@ export const redditPresets = [
         time: "day",
         roundRobin: true,
         isPreset: true,
+        intensity: 3,
     },
     {
         name: "Hypno/Conversion",
@@ -39,6 +43,7 @@ export const redditPresets = [
         time: "day",
         roundRobin: true,
         isPreset: true,
+        intensity: 4,
     },
     {
         name: "BBC",
@@ -47,6 +52,7 @@ export const redditPresets = [
         time: "day",
         roundRobin: true,
         isPreset: true,
+        intensity: 4,
     },
     {
         name: "Cock Suckers",
@@ -55,6 +61,7 @@ export const redditPresets = [
         time: "day",
         roundRobin: true,
         isPreset: true,
+        intensity: 2,
     },
     {
         name: "Pussy",
@@ -63,6 +70,7 @@ export const redditPresets = [
         time: "day",
         roundRobin: true,
         isPreset: true,
+        intensity: 1,
     },
     {
         name: "Hentai Bestiality and Monsters",
@@ -71,5 +79,6 @@ export const redditPresets = [
         time: "day",
         roundRobin: true,
         isPreset: true,
+        intensity: 4,
     },
 ]

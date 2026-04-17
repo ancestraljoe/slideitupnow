@@ -6,8 +6,13 @@ import { renderPlaylistChips, renderPlaylistSettings, promptSavePlaylist } from 
 import { startReddit, nextRedditSlides, initReddit, resetReddit } from './reddit.js';
 import { createVideoSlide, createImageSlide, createIframeSlide } from './slideFactory.js';
 import { showToast } from './toast.js';
+import { initGoonTimer, getSelectedMinutes, startTimer, stopTimer, pauseTimer, resumeTimer } from './goonTimer.js';
+import { isEscalationEnabled, setEscalationMode, getEscalationLevel, getLevelLabel, getLevelColor, resetEscalation } from './escalation.js';
 
 const DEBOUNCE_MS = 100;
+let isEdging = false;
+let edgeStartTime = null;
+let edgeTimerInterval = null;
 
 let inProgress = false;
 let currentSourceConfig = null;
@@ -24,6 +29,28 @@ function showLoader(text) {
 
 function hideLoader() {
     document.getElementById("load-container").style.display = 'none'
+}
+
+let levelUpdateInterval = null
+
+function beginSession() {
+    inProgress = true
+    setEscalationMode(document.getElementById('intensityLevel')?.value || 'max')
+    startTimer(getSelectedMinutes())
+    // Update escalation level indicator
+    if (isEscalationEnabled()) {
+        updateLevelIndicator()
+        levelUpdateInterval = setInterval(updateLevelIndicator, 5000)
+    }
+}
+
+function updateLevelIndicator() {
+    const el = document.getElementById('toolbarLevel')
+    if (!el) return
+    if (!isEscalationEnabled()) { el.textContent = ''; return }
+    const level = getEscalationLevel()
+    el.textContent = getLevelLabel(level)
+    el.style.color = getLevelColor(level)
 }
 
 function hideTitleContent() {
@@ -47,7 +74,7 @@ async function openDir2() {
         hideTitleContent()
         showLoader("Loading files...")
         await loadFiles(folder)
-        inProgress = true
+        beginSession()
         currentSourceConfig = { type: 'local', folderName: folder.name || 'Local' }
         slidesFetcher = nextFileSlides
         slidesRestarter = restartSlides
@@ -69,7 +96,7 @@ async function openReddit() {
         if (await startReddit()) {
             hideTitleContent()
             hideLoader()
-            inProgress = true
+            beginSession()
             currentSourceConfig = {
                 type: 'reddit',
                 subreddits: Array.from(document.getElementsByClassName("pickedSubreddit")).map(e => e.innerText.trim()),
@@ -96,7 +123,7 @@ async function openReddit() {
 async function openFavorites() {
     startFavSlides()
     hideTitleContent()
-    inProgress = true
+    beginSession()
     slidesFetcher = nextFavSlides
     slidesRestarter = restartFavSlides
     for (const e of document.getElementsByClassName("slideshow-row")) {
@@ -109,7 +136,7 @@ async function openDropped(droppedItems) {
         hideTitleContent()
         showLoader("Loading dropped files...")
         await loadDroppedFiles(droppedItems)
-        inProgress = true
+        beginSession()
         slidesFetcher = nextFileSlides
         slidesRestarter = restartSlides
         for (const e of document.getElementsByClassName("slideshow-row")) {
@@ -121,6 +148,47 @@ async function openDropped(droppedItems) {
         showToast('Failed to load dropped files: ' + e.message, 'error')
     }
 }
+
+// --- Edge Pause ---
+
+function toggleEdge() {
+    if (!inProgress) return
+    if (isEdging) {
+        resumeFromEdge()
+    } else {
+        enterEdge()
+    }
+}
+
+function enterEdge() {
+    isEdging = true
+    edgeStartTime = Date.now()
+    pauseTimer()
+    // Pause all videos
+    for (const v of document.querySelectorAll('.videoSlide')) v.pause()
+    // Show overlay
+    document.getElementById('edge-overlay').classList.add('visible')
+    // Start edge timer
+    edgeTimerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - edgeStartTime) / 1000)
+        const mins = Math.floor(elapsed / 60)
+        const secs = elapsed % 60
+        document.getElementById('edgeTimer').textContent = mins + ':' + String(secs).padStart(2, '0')
+    }, 1000)
+}
+
+function resumeFromEdge() {
+    isEdging = false
+    if (edgeTimerInterval) { clearInterval(edgeTimerInterval); edgeTimerInterval = null }
+    resumeTimer()
+    // Resume videos
+    for (const v of document.querySelectorAll('.videoSlide')) v.play()
+    // Hide overlay
+    document.getElementById('edge-overlay').classList.remove('visible')
+    document.getElementById('edgeTimer').textContent = '0:00'
+}
+
+export { toggleEdge }
 
 // --- Resource cleanup ---
 
@@ -307,6 +375,11 @@ async function changeGrid() {
 function goHome() {
     if (!inProgress) return
     disposeAllResources()
+    if (isEdging) resumeFromEdge()
+    stopTimer()
+    resetEscalation()
+    if (levelUpdateInterval) { clearInterval(levelUpdateInterval); levelUpdateInterval = null }
+    document.getElementById('toolbarLevel').textContent = ''
     inProgress = false
     currentSourceConfig = null
     setIsPaused(false)
@@ -366,8 +439,11 @@ window.onload = () => {
     slideshowGrid = document.getElementById("slideshow-grid")
     document.getElementById("browseReddit").onclick = showRedditForm
     document.getElementById("redditSubmit").onclick = openReddit
-    initSettings(changeGrid, goHome)
+    initSettings(changeGrid, goHome, toggleEdge)
     initReddit()
+    initGoonTimer(goHome)
+    document.getElementById('edgeBtn').onclick = toggleEdge
+    document.getElementById('edge-overlay').onclick = resumeFromEdge
     initDragDrop(openDropped)
     initFavorites()
     const favCard = document.getElementById('browseFavorites')

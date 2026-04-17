@@ -1085,3 +1085,188 @@ a:hover {
 .toast-info {
   border-color: var(--accent);
 }
+
+/* =====================================================
+   Edge Overlay
+   ===================================================== */
+#edge-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(10, 10, 11, 0.85);
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+#edge-overlay.visible {
+  display: flex;
+}
+
+.edge-content {
+  text-align: center;
+  pointer-events: none;
+}
+
+.edge-text {
+  font-size: clamp(48px, 10vw, 96px);
+  font-weight: 200;
+  color: var(--accent);
+  letter-spacing: 4px;
+  animation: edgePulse 2s ease-in-out infinite;
+}
+
+.edge-timer {
+  font-size: clamp(24px, 5vw, 40px);
+  color: var(--text-muted);
+  margin-top: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.edge-hint {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 24px;
+  opacity: 0.6;
+}
+
+@keyframes edgePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* =====================================================
+   Goon Timer Bar
+   ===================================================== */
+#goon-timer-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), #ef4444);
+  z-index: 30;
+  display: none;
+  transition: width 1s linear;
+}
+
+/* Toolbar timer + level display */
+.toolbar-level {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 6px;
+}
+
+.toolbar-timer {
+  font-size: 13px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  padding: 0 8px;
+  min-width: 40px;
+}
+
+/* =====================================================
+   Timer End Overlay
+   ===================================================== */
+#timer-end-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: rgba(10, 10, 11, 0.9);
+  justify-content: center;
+  align-items: center;
+}
+
+#timer-end-overlay.visible {
+  display: flex;
+}
+
+.timer-end-content {
+  text-align: center;
+}
+
+.timer-end-text {
+  font-size: clamp(36px, 8vw, 64px);
+  font-weight: 200;
+  color: var(--text-primary);
+  margin-bottom: 32px;
+}
+
+.timer-end-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.timer-end-btn {
+  padding: 12px 24px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.timer-end-btn:hover {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+}
+
+.timer-end-finish {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.timer-end-finish:hover {
+  background: var(--accent-hover);
+}
+
+/* =====================================================
+   Timer Picker (Welcome Screen)
+   ===================================================== */
+.timer-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.timer-picker-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
+.timer-btn {
+  padding: 6px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.timer-btn:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.timer-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
