@@ -7,7 +7,7 @@ import { startReddit, nextRedditSlides, initReddit, resetReddit } from './reddit
 import { createVideoSlide, createImageSlide, createIframeSlide } from './slideFactory.js';
 import { showToast } from './toast.js';
 import { initGoonTimer, getSelectedMinutes, startTimer, stopTimer, pauseTimer, resumeTimer } from './goonTimer.js';
-import { isEscalationEnabled, setEscalationEnabled, getEscalationLevel, getLevelLabel, getLevelColor, resetEscalation } from './escalation.js';
+import { isEscalationEnabled, setEscalationMode, getEscalationLevel, getLevelLabel, getLevelColor, resetEscalation } from './escalation.js';
 
 const DEBOUNCE_MS = 100;
 let isEdging = false;
@@ -35,7 +35,7 @@ let levelUpdateInterval = null
 
 function beginSession() {
     inProgress = true
-    setEscalationEnabled(document.getElementById('escalationMode')?.checked || false)
+    setEscalationMode(document.getElementById('intensityLevel')?.value || 'max')
     startTimer(getSelectedMinutes())
     // Update escalation level indicator
     if (isEscalationEnabled()) {

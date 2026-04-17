@@ -220,14 +220,14 @@
                         <span></span><span id="pickedSubreddits"></span>
                     </div>
                     <div>
-                        <div class="tooltip-container">
-                            <label for="escalationMode" class="tooltip-target">Escalation (?)</label>
-                            <div class="tooltip">
-                                Content starts soft and builds in intensity over time.
-                                Works best with multiple presets or the timer.
-                            </div>
-                        </div>
-                        <input type="checkbox" autocomplete="off" id="escalationMode">
+                        <label>Intensity</label>
+                        <select id="intensityLevel" autocomplete="off">
+                            <option value="auto">Auto (escalate)</option>
+                            <option value="1">Soft</option>
+                            <option value="2">Medium</option>
+                            <option value="3">Intense</option>
+                            <option value="4" selected>Max (all)</option>
+                        </select>
                     </div>
                     <div>
                         <div class="tooltip-container">
