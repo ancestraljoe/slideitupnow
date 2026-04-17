@@ -7,6 +7,7 @@ import { startReddit, nextRedditSlides, initReddit, resetReddit } from './reddit
 import { createVideoSlide, createImageSlide, createIframeSlide } from './slideFactory.js';
 import { showToast } from './toast.js';
 import { initGoonTimer, getSelectedMinutes, startTimer, stopTimer, pauseTimer, resumeTimer } from './goonTimer.js';
+import { isEscalationEnabled, setEscalationEnabled, getEscalationLevel, getLevelLabel, getLevelColor, resetEscalation } from './escalation.js';
 
 const DEBOUNCE_MS = 100;
 let isEdging = false;
@@ -30,9 +31,26 @@ function hideLoader() {
     document.getElementById("load-container").style.display = 'none'
 }
 
+let levelUpdateInterval = null
+
 function beginSession() {
     inProgress = true
+    setEscalationEnabled(document.getElementById('escalationMode')?.checked || false)
     startTimer(getSelectedMinutes())
+    // Update escalation level indicator
+    if (isEscalationEnabled()) {
+        updateLevelIndicator()
+        levelUpdateInterval = setInterval(updateLevelIndicator, 5000)
+    }
+}
+
+function updateLevelIndicator() {
+    const el = document.getElementById('toolbarLevel')
+    if (!el) return
+    if (!isEscalationEnabled()) { el.textContent = ''; return }
+    const level = getEscalationLevel()
+    el.textContent = getLevelLabel(level)
+    el.style.color = getLevelColor(level)
 }
 
 function hideTitleContent() {
@@ -359,6 +377,9 @@ function goHome() {
     disposeAllResources()
     if (isEdging) resumeFromEdge()
     stopTimer()
+    resetEscalation()
+    if (levelUpdateInterval) { clearInterval(levelUpdateInterval); levelUpdateInterval = null }
+    document.getElementById('toolbarLevel').textContent = ''
     inProgress = false
     currentSourceConfig = null
     setIsPaused(false)

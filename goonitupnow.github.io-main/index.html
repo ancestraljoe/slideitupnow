@@ -26,6 +26,7 @@
             <button class="toolbar-btn" id="edgeBtn"><span class="btn-icon">&#9889;</span><span class="btn-label">Edge</span></button>
             <div class="toolbar-sep"></div>
             <span class="toolbar-timer" id="toolbarTimer"></span>
+            <span class="toolbar-level" id="toolbarLevel"></span>
             <button class="toolbar-btn" id="savePlaylist"><span class="btn-icon">&#128190;</span><span class="btn-label">Save</span></button>
             <div class="toolbar-sep"></div>
             <button class="toolbar-btn" id="backHome"><span class="btn-icon">&#8962;</span><span class="btn-label">Home</span></button>
@@ -217,6 +218,16 @@
                     <div id="subredditError" style="display: none;"></div>
                     <div>
                         <span></span><span id="pickedSubreddits"></span>
+                    </div>
+                    <div>
+                        <div class="tooltip-container">
+                            <label for="escalationMode" class="tooltip-target">Escalation (?)</label>
+                            <div class="tooltip">
+                                Content starts soft and builds in intensity over time.
+                                Works best with multiple presets or the timer.
+                            </div>
+                        </div>
+                        <input type="checkbox" autocomplete="off" id="escalationMode">
                     </div>
                     <div>
                         <div class="tooltip-container">

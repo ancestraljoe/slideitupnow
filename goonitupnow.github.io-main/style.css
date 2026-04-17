@@ -1151,7 +1151,15 @@ a:hover {
   transition: width 1s linear;
 }
 
-/* Toolbar timer display */
+/* Toolbar timer + level display */
+.toolbar-level {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 6px;
+}
+
 .toolbar-timer {
   font-size: 13px;
   color: var(--accent);
