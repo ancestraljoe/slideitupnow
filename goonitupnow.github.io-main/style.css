@@ -1087,6 +1087,129 @@ a:hover {
 }
 
 /* =====================================================
+   Slide Captions
+   ===================================================== */
+.slide-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px 12px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.3;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.captions-hover .slide-wrapper:hover .slide-caption { opacity: 1; }
+.captions-always .slide-caption { opacity: 1; }
+
+/* =====================================================
+   Preset Checkboxes
+   ===================================================== */
+.preset-section {
+  margin-bottom: 12px;
+}
+
+.preset-section-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.preset-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.preset-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.preset-checkbox:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.preset-checkbox input:checked + span {
+  color: var(--accent);
+}
+
+.preset-checkbox input {
+  accent-color: var(--accent);
+}
+
+/* =====================================================
+   Discover Dropdown
+   ===================================================== */
+.discover-btn {
+  padding: 8px 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-left: 4px;
+}
+
+.discover-btn:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.discover-dropdown {
+  position: relative;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.discover-item {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.discover-item:hover {
+  background: var(--accent-subtle);
+  color: var(--text-primary);
+}
+
+/* =====================================================
    Edge Overlay
    ===================================================== */
 #edge-overlay {

@@ -39,6 +39,7 @@ export function createVideoSlide(slide, onSkip, settings, hlsSources) {
     const slideInfo = {
         url: slide.url || slide.hls,
         name: slide.name || slide.droppedFile?.name,
+        title: slide.title,
         format: 'video',
         source: slide.url ? 'reddit' : 'local',
         width: slide.width,
@@ -129,6 +130,7 @@ export function createImageSlide(slide, onSkip, settings) {
     const slideInfo = {
         url: slide.url,
         name: slide.name || slide.droppedFile?.name,
+        title: slide.title,
         format: 'image',
         source: slide.url ? 'reddit' : 'local',
         width: slide.width,
