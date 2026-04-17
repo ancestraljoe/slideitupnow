@@ -2,7 +2,12 @@ import { redditPresets } from './reddit_presets.js'
 import { shuffle, scaleWidth } from './utils.js'
 
 let redditSlideGroups = [];
-let baseUrl = "https://api.reddit.com/r/";
+const REDDIT_ENDPOINTS = [
+    "https://api.reddit.com/r/",
+    "https://www.reddit.com/r/",
+    "https://old.reddit.com/r/"
+]
+let baseUrl = REDDIT_ENDPOINTS[0];
 let urlSuffix;
 let redditSlideGroupIndex = 0;
 let redgifsUrlPattern = /http:\/\/[^.]+/
@@ -51,10 +56,24 @@ async function loadNextPage(slideDefinition) {
         return
     }
     slideDefinition.isLoading = true;
-    let url = baseUrl + slideDefinition.subreddits + urlSuffix + (slideDefinition.after ? "&after=" + slideDefinition.after : "")
+    let jsonResp = null
+    for (const endpoint of REDDIT_ENDPOINTS) {
+        const url = endpoint + slideDefinition.subreddits + urlSuffix + (slideDefinition.after ? "&after=" + slideDefinition.after : "")
+        try {
+            const response = await fetch(url)
+            jsonResp = await response.json()
+            if (jsonResp?.data?.children) {
+                baseUrl = endpoint // stick with working endpoint
+                break
+            }
+        } catch(e) { continue }
+    }
+    if (!jsonResp?.data?.children) {
+        redditSlideGroups.splice(redditSlideGroups.indexOf(slideDefinition), 1)
+        slideDefinition.isLoading = false
+        return
+    }
     try {
-        const response = await fetch(url)
-        const jsonResp = await response.json()
         let metadataPromises = []
         slideDefinition.after = jsonResp.data.after
         for (let child of jsonResp.data.children) {
