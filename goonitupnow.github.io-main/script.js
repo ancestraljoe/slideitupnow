@@ -11,6 +11,7 @@ import { isEscalationEnabled, setEscalationMode, getEscalationLevel, getLevelLab
 
 const DEBOUNCE_MS = 100;
 let isEdging = false;
+let captionMode = 'off'; // 'off', 'hover', 'always'
 let edgeStartTime = null;
 let edgeTimerInterval = null;
 
@@ -188,7 +189,25 @@ function resumeFromEdge() {
     document.getElementById('edgeTimer').textContent = '0:00'
 }
 
-export { toggleEdge }
+function toggleCaptions() {
+    if (captionMode === 'off') {
+        captionMode = 'hover'
+        document.getElementById('slideshow-grid').classList.remove('captions-always')
+        document.getElementById('slideshow-grid').classList.add('captions-hover')
+        showToast('Captions: on hover', 'info')
+    } else if (captionMode === 'hover') {
+        captionMode = 'always'
+        document.getElementById('slideshow-grid').classList.remove('captions-hover')
+        document.getElementById('slideshow-grid').classList.add('captions-always')
+        showToast('Captions: always visible', 'info')
+    } else {
+        captionMode = 'off'
+        document.getElementById('slideshow-grid').classList.remove('captions-hover', 'captions-always')
+        showToast('Captions: off', 'info')
+    }
+}
+
+export { toggleEdge, toggleCaptions }
 
 // --- Resource cleanup ---
 
@@ -439,7 +458,8 @@ window.onload = () => {
     slideshowGrid = document.getElementById("slideshow-grid")
     document.getElementById("browseReddit").onclick = showRedditForm
     document.getElementById("redditSubmit").onclick = openReddit
-    initSettings(changeGrid, goHome, toggleEdge)
+    initSettings(changeGrid, goHome, toggleEdge, toggleCaptions)
+    document.getElementById('captionToggle').onclick = toggleCaptions
     initReddit()
     initGoonTimer(goHome)
     document.getElementById('edgeBtn').onclick = toggleEdge

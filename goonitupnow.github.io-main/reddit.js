@@ -18,17 +18,28 @@ export function resetReddit() {
     urlSuffix = undefined
 }
 
+let gifPriorityEnabled = false
+
 export async function startReddit() {
     addSubreddit();
     let subreddits = [];
+    // Collect from checked presets
+    for (const cb of document.querySelectorAll('#presetCheckboxes input:checked')) {
+        const preset = redditPresets.find(p => p.name === cb.value)
+        if (preset) preset.subreddits.forEach(s => subreddits.push(s))
+    }
+    // Collect from manually added subreddits
     for (const redditElem of document.getElementsByClassName("pickedSubreddit")) {
         redditElem.innerText.trim().split("+").forEach((sr) => {
-            subreddits.push(sr.trim())
+            if (sr.trim()) subreddits.push(sr.trim())
         })
     }
+    // Deduplicate
+    subreddits = [...new Set(subreddits)]
     if (subreddits.length == 0) {
         return false;
     }
+    gifPriorityEnabled = document.getElementById("gifPriority")?.checked || false
     const sort = document.getElementById("redditSort").value;
     const time = document.getElementById("redditTime").value
     const roundRobin = document.getElementById("roundRobin").checked
@@ -87,7 +98,7 @@ async function loadNextPage(slideDefinition) {
                     if (media) {
                         if (media.m.indexOf("image") === 0) {
                             let fileEnding = media.m.split("/")[1]
-                            slideDefinition.slides.push({type: 'short', url: 'https://i.redd.it/' + media.id + '.' + fileEnding, format: 'image', width: media.s.x, height: media.s.y})
+                            slideDefinition.slides.push({type: 'short', url: 'https://i.redd.it/' + media.id + '.' + fileEnding, format: 'image', width: media.s.x, height: media.s.y, title: child.data.title, isAnimated: fileEnding === 'gif'})
                         }
                     }
                 }
@@ -96,10 +107,11 @@ async function loadNextPage(slideDefinition) {
                 elem.innerHTML = child.data.media_embed.content
                 const decoded = elem.innerText
                 if (decoded.trimStart().toLowerCase().startsWith('<iframe')) {
-                    slideDefinition.slides.push({format: 'iframe', html: decoded, height: child.data.media_embed.height, width: child.data.media_embed.width})
+                    slideDefinition.slides.push({format: 'iframe', html: decoded, height: child.data.media_embed.height, width: child.data.media_embed.width, title: child.data.title, isAnimated: true})
                 }
             } else if (child.data.url && /\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i.test(child.data.url)) {
-                const imgObj = {type: 'short', url: child.data.url, format: 'image'}
+                const isGif = /\.gif$/i.test(child.data.url)
+                const imgObj = {type: 'short', url: child.data.url, format: 'image', title: child.data.title, isAnimated: isGif}
                 if (child.data.preview && child.data.preview.images && child.data.preview.images[0].source) {
                     imgObj.width = child.data.preview.images[0].source.width
                     imgObj.height = child.data.preview.images[0].source.height
@@ -110,6 +122,10 @@ async function loadNextPage(slideDefinition) {
             }
         }
         await Promise.all(metadataPromises)
+        // GIF priority: sort animated content first
+        if (gifPriorityEnabled) {
+            slideDefinition.slides.sort((a, b) => (b.isAnimated ? 1 : 0) - (a.isAnimated ? 1 : 0))
+        }
     } catch (e) {
         redditSlideGroups.splice(redditSlideGroups.indexOf(slideDefinition), 1)
     }
@@ -300,15 +316,57 @@ function saveProfile(subreddits, sort, time, roundRobin) {
     }
 }
 
+function fillPresetCheckboxes() {
+    const container = document.getElementById('presetCheckboxes')
+    if (!container) return
+    for (const preset of redditPresets) {
+        const label = document.createElement('label')
+        label.className = 'preset-checkbox'
+        const cb = document.createElement('input')
+        cb.type = 'checkbox'
+        cb.value = preset.name
+        const span = document.createElement('span')
+        span.textContent = preset.name
+        label.appendChild(cb)
+        label.appendChild(span)
+        container.appendChild(label)
+    }
+}
+
+async function discoverSubreddits() {
+    const query = subredditInput.value.trim()
+    if (!query) return
+    const dropdown = document.getElementById('discoverDropdown')
+    dropdown.style.display = 'block'
+    dropdown.textContent = 'Searching...'
+    try {
+        const resp = await fetch('/reddit/subreddits/search.json?q=' + encodeURIComponent(query) + '&limit=8&include_over_18=true')
+        const data = await resp.json()
+        dropdown.textContent = ''
+        if (!data?.data?.children?.length) {
+            dropdown.textContent = 'No results'
+            setTimeout(() => dropdown.style.display = 'none', 2000)
+            return
+        }
+        for (const child of data.data.children) {
+            const name = child.data.display_name
+            const btn = document.createElement('button')
+            btn.className = 'discover-item'
+            btn.textContent = 'r/' + name + (child.data.over18 ? ' (NSFW)' : '')
+            btn.onclick = () => {
+                addSubredditValue(name)
+                dropdown.style.display = 'none'
+            }
+            dropdown.appendChild(btn)
+        }
+    } catch(e) {
+        dropdown.textContent = 'Search failed'
+        setTimeout(() => dropdown.style.display = 'none', 2000)
+    }
+}
+
 function fillProfiles() {
     const redditProfileString = localStorage.getItem("redditProfiles")
-    const presetGroup = profilePicker.querySelector('optgroup[label="Presets"]')
-    for (let preset of redditPresets) {
-        const option = document.createElement("option")
-        option.setAttribute("value", "--preset--" + preset.name)
-        option.innerText = preset.name
-        presetGroup.appendChild(option)
-    }
     if (redditProfileString) {
         const customGroup = profilePicker.querySelector('optgroup[label="Custom"]')
         const redditProfileNames = JSON.parse(redditProfileString).map(prof => prof.name)
@@ -333,5 +391,10 @@ export function initReddit() {
     profileTextInput = document.getElementById('profileNameInput')
     profilePicker = document.getElementById('profilePicker')
     profilePicker.onchange = profileChanged
+    fillPresetCheckboxes()
     fillProfiles()
+
+    // Discover button
+    const discoverBtn = document.getElementById('subredditDiscover')
+    if (discoverBtn) discoverBtn.onclick = discoverSubreddits
 }

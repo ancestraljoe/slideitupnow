@@ -88,6 +88,13 @@ export function wrapSlide(slideElem, slideInfo) {
     wrapper.style.height = '100%'
     wrapper.appendChild(slideElem)
     wrapper.appendChild(createFavButton(slideInfo))
+    // Caption overlay
+    if (slideInfo.title) {
+        const caption = document.createElement('div')
+        caption.className = 'slide-caption'
+        caption.textContent = slideInfo.title
+        wrapper.appendChild(caption)
+    }
     return wrapper
 }
 

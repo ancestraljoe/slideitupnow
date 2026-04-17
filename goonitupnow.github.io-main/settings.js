@@ -253,6 +253,7 @@ export function resetRowFocus() {
 }
 
 let onEdgeToggle = null
+let onCaptionToggle = null
 
 // --- Keyboard shortcuts ---
 function initKeyboard(onGoHome) {
@@ -293,6 +294,11 @@ function initKeyboard(onGoHome) {
             case "E":
                 e.preventDefault()
                 if (onEdgeToggle) onEdgeToggle()
+                break
+            case "c":
+            case "C":
+                e.preventDefault()
+                if (onCaptionToggle) onCaptionToggle()
                 break
             case "ArrowRight":
                 e.preventDefault()
@@ -338,8 +344,9 @@ function initKeyboard(onGoHome) {
     })
 }
 
-export function initSettings(onGridChanged, onGoHome, onToggleEdge) {
+export function initSettings(onGridChanged, onGoHome, onToggleEdge, onToggleCaptions) {
     onEdgeToggle = onToggleEdge
+    onCaptionToggle = onToggleCaptions
     gridChanged = onGridChanged
 
     // Theme
