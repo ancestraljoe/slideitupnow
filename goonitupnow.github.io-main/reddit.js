@@ -3,9 +3,9 @@ import { shuffle, scaleWidth } from './utils.js'
 
 let redditSlideGroups = [];
 const REDDIT_ENDPOINTS = [
+    "/reddit/r/",
     "https://api.reddit.com/r/",
-    "https://www.reddit.com/r/",
-    "https://old.reddit.com/r/"
+    "https://www.reddit.com/r/"
 ]
 let baseUrl = REDDIT_ENDPOINTS[0];
 let urlSuffix;
